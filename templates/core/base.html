@@ -1,0 +1,31 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>City & State News</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="logo">City & State News</div>
+        <ul class="nav-links">
+            <li><a href="#">Home</a></li>
+            <li><a href="#">City</a></li>
+            <li><a href="#">State</a></li>
+            <li><a href="#">Contact</a></li>
+        </ul>
+    </nav>
+
+    <!-- Main Content -->
+    <section class="hero">
+        <h1>Latest Breaking News Updates</h1>
+        <p>Stay updated with real-time city and state news.</p>
+    </section>
+
+    {% block content %}
+    {% endblock %}
+
+</body>
+</html>
