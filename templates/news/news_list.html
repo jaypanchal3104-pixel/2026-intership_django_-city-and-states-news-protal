@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+{% block title %}All News{% endblock %}
+
+{% block content %}
+
+<h2>All News</h2>
+
+{% for news in news_list %}
+<div class="news-card">
+    <h3>{{ news.title }}</h3>
+    <p>{{ news.content|truncatewords:15 }}</p>
+    <a href="{% url 'news_detail' news.id %}">View Details</a>
+</div>
+<hr>
+{% empty %}
+<p>No news found.</p>
+{% endfor %}
+
+{% endblock %}

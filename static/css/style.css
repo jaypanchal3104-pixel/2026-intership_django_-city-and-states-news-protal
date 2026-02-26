@@ -1,95 +1,66 @@
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: 'Poppins', sans-serif;
-}
-
-/* Body Background */
-body {
-    background-color: #f4f4f4;
-}
-
-/* Navbar */
-.navbar {
-    background-color: #c40000;
-    color: white;
-    padding: 15px 8%;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.navbar .logo {
-    font-size: 22px;
-    font-weight: bold;
-}
-
-.navbar ul {
-    list-style: none;
-    display: flex;
-    gap: 25px;
-}
-
-.navbar ul li a {
-    text-decoration: none;
-    color: white;
-    font-weight: 500;
-}
-
-/* Main Section */
-.hero {
-    text-align: center;
-    padding: 40px 20px;
-    background: white;
-    border-bottom: 3px solid #c40000;
-}
-
-.hero h1 {
-    font-size: 32px;
-    color: #c40000;
-}
-
-/* Signup Form Center */
-.signup-container {
+/* Full page center */
+.auth-wrapper {
+    height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 80vh;
+    background: linear-gradient(135deg, #1e3c72, #2a5298);
 }
 
-.signup-box {
-    background: white;
-    padding: 35px;
-    width: 380px;
-    border-radius: 8px;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+/* Card Design */
+.auth-card {
+    width: 400px;
+    padding: 40px;
+    background: #ffffff;
+    border-radius: 15px;
+    box-shadow: 0 15px 35px rgba(0,0,0,0.2);
 }
 
-.signup-box h2 {
+.auth-card h2 {
     text-align: center;
+    margin-bottom: 30px;
+    font-weight: 600;
+}
+
+/* Form Group */
+.form-group {
     margin-bottom: 20px;
-    color: #c40000;
 }
 
-.signup-box input {
+.form-group label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: 500;
+}
+
+.form-group input,
+.form-group select {
     width: 100%;
     padding: 10px;
-    margin: 8px 0;
+    border-radius: 8px;
     border: 1px solid #ccc;
-    border-radius: 5px;
+    outline: none;
+    transition: 0.3s;
 }
 
-.signup-box button {
+.form-group input:focus,
+.form-group select:focus {
+    border-color: #2a5298;
+}
+
+/* Button */
+.auth-btn {
     width: 100%;
-    padding: 10px;
-    background-color: #c40000;
+    padding: 12px;
+    background: #2a5298;
     color: white;
     border: none;
-    border-radius: 5px;
+    border-radius: 8px;
+    font-size: 16px;
     cursor: pointer;
+    transition: 0.3s;
 }
 
-.signup-box button:hover {
-    background-color: #900000;
+.auth-btn:hover {
+    background: #1e3c72;
 }
