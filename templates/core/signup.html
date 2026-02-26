@@ -1,18 +1,5 @@
-{% extends 'core/base.html' %}
-{% block content %}
-
-<div class="signup-container">
-    <div class="signup-box">
-        <h2>Create Account</h2>
-        <form method="POST">
-            {% csrf_token %}
-            <input type="role" placeholder="role" name="role">
-            <input type="email" placeholder="Email" name="email">
-            <input type="password" placeholder="Password" name="password">
-            <input type="password" placeholder="Confirm Password" name="confirm_password">
-            <button type="submit">Sign Up</button>
-        </form>
-    </div>
-</div>
-
-{% endblock %}
+<form method="post">
+    {% csrf_token %}
+    {{form.as_p}}
+    <button type="submit">Signup</button>
+</form>
