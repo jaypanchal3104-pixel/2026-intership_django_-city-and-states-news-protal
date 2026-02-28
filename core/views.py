@@ -1,7 +1,7 @@
-from django.shortcuts import render,redirect
+from django.shortcuts import render,redirect,HttpResponse
 from .forms import UserSignupForm,UserLoginForm
+from django.contrib.auth import authenticate,login
 
-from django.contrib.auth import authenticate, login
 
 # Create your views here.
 def userSignupView(request):
