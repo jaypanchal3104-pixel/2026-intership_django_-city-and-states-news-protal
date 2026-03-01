@@ -1,6 +1,8 @@
 from django.shortcuts import render,redirect,HttpResponse
 from .forms import UserSignupForm,UserLoginForm
 from django.contrib.auth import authenticate,login
+from django.core.mail import send_mail
+from django.conf import settings
 
 
 # Create your views here.
@@ -8,6 +10,9 @@ def userSignupView(request):
     if request.method =="POST":
       form = UserSignupForm(request.POST or None)
       if form.is_valid():
+        #email send
+        email = form.cleaned_data['email']
+        send_mail(subject="welcome to find my parking",message="Thank you for registering with Find My Parking.",from_email=settings.EMAIL_HOST_USER,recipient_list=[email])
         form.save()
         return redirect('login') #error
       else:
