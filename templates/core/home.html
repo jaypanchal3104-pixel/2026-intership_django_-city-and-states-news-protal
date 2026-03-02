@@ -1,21 +1,37 @@
 {% extends 'base.html' %}
 
-{% block title %}Home - News{% endblock %}
-
 {% block content %}
 
-<h2>Latest News</h2>
+<section class="hero">
+    <div class="hero-content">
+        <h1>Latest Breaking News</h1>
+        <p>Stay updated with real-time City & State News.</p>
+        <button class="read-btn">Read More</button>
+    </div>
+</section>
 
-{% for news in news_list %}
-<div class="news-card">
-    <h3>{{ news.title }}</h3>
-    <p>{{ news.content|truncatewords:20 }}</p>
-    <p><b>Category:</b> {{ news.category }}</p>
-    <a href="{% url 'news_detail' news.id %}">Read More</a>
-</div>
-<hr>
-{% empty %}
-<p>No news available.</p>
-{% endfor %}
+<section class="news-section">
+    <h2>Trending News</h2>
+
+    <div class="news-container">
+        <div class="news-card">
+            <img src="https://source.unsplash.com/400x250/?city" alt="">
+            <h3>City Development Updates</h3>
+            <p>New smart city project launched...</p>
+        </div>
+
+        <div class="news-card">
+            <img src="https://source.unsplash.com/400x250/?government" alt="">
+            <h3>State Government Policy</h3>
+            <p>New education reforms announced...</p>
+        </div>
+
+        <div class="news-card">
+            <img src="https://source.unsplash.com/400x250/?india" alt="">
+            <h3>National Headlines</h3>
+            <p>Major updates across the country...</p>
+        </div>
+    </div>
+</section>
 
 {% endblock %}

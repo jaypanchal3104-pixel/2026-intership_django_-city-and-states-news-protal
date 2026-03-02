@@ -7,25 +7,27 @@
 </head>
 <body>
 
-    <!-- Navbar -->
-    <nav class="navbar">
-        <div class="logo">City & State News</div>
-        <ul class="nav-links">
-            <li><a href="#">Home</a></li>
-            <li><a href="#">City</a></li>
-            <li><a href="#">State</a></li>
-            <li><a href="#">Contact</a></li>
-        </ul>
-    </nav>
-
-    <!-- Main Content -->
-    <section class="hero">
-        <h1>Latest Breaking News Updates</h1>
-        <p>Stay updated with real-time city and state news.</p>
-    </section>
+    <!-- Premium Navbar -->
+    <header class="navbar">
+        <div class="logo">City<span>News</span></div>
+        <nav>
+            <ul>
+                <li><a href="/">Home</a></li>
+                <li><a href="#">City</a></li>
+                <li><a href="#">State</a></li>
+                <li><a href="#">Contact</a></li>
+                <li><a href="/login/" class="login-btn">Login</a></li>
+            </ul>
+        </nav>
+    </header>
 
     {% block content %}
     {% endblock %}
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>© 2026 CityNews. All Rights Reserved.</p>
+    </footer>
 
 </body>
 </html>

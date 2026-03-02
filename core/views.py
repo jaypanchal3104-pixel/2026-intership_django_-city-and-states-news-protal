@@ -12,7 +12,7 @@ def userSignupView(request):
       if form.is_valid():
         #email send
         email = form.cleaned_data['email']
-        send_mail(subject="welcome to find my parking",message="Thank you for registering with Find My Parking.",from_email=settings.EMAIL_HOST_USER,recipient_list=[email])
+        send_mail(subject="welcome to city and state news protal",message="Thank you for registering with city and state news protal.",from_email=settings.EMAIL_HOST_USER,recipient_list=[email])
         form.save()
         return redirect('login') #error
       else:
