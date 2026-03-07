@@ -1,20 +1,26 @@
 {% extends 'base.html' %}
-
 {% block title %}All News{% endblock %}
 
 {% block content %}
+<h1 class="page-title">Latest News</h1>
 
-<h2>All News</h2>
+<div class="news-container">
+    <div class="news-card">
+        <h3>City News Title</h3>
+        <p>This is sample city news description.</p>
+        <a href="#" class="btn">Read More</a>
+    </div>
 
-{% for news in news_list %}
-<div class="news-card">
-    <h3>{{ news.title }}</h3>
-    <p>{{ news.content|truncatewords:15 }}</p>
-    <a href="{% url 'news_detail' news.id %}">View Details</a>
+    <div class="news-card">
+        <h3>State News Title</h3>
+        <p>This is sample state news description.</p>
+        <a href="#" class="btn">Read More</a>
+    </div>
+
+    <div class="news-card">
+        <h3>Breaking News</h3>
+        <p>This is breaking news sample content.</p>
+        <a href="#" class="btn">Read More</a>
+    </div>
 </div>
-<hr>
-{% empty %}
-<p>No news found.</p>
-{% endfor %}
-
 {% endblock %}

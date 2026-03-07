@@ -1,6 +1,14 @@
 {% extends 'base.html' %}
+{% block title %}Editor Dashboard{% endblock %}
 
 {% block content %}
-<h2>Editor Dashboard</h2>
-<p>Review and publish news.</p>
+<div class="dashboard-card">
+    <h1>Editor Dashboard</h1>
+    <p>Welcome Editor! Edit and manage news content here.</p>
+
+    <div class="dashboard-links">
+        <a href="/news/" class="btn">View All News</a>
+        <a href="/profile/" class="btn">Profile</a>
+    </div>
+</div>
 {% endblock %}

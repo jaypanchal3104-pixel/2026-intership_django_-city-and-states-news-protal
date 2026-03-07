@@ -1,33 +1,45 @@
 {% load static %}
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>City & State News</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}City & State News{% endblock %}</title>
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
 </head>
 <body>
 
-    <!-- Premium Navbar -->
-    <header class="navbar">
-        <div class="logo">City<span>News</span></div>
-        <nav>
-            <ul>
-                <li><a href="/">Home</a></li>
-                <li><a href="#">City</a></li>
-                <li><a href="#">State</a></li>
-                <li><a href="#">Contact</a></li>
-                <li><a href="/login/" class="login-btn">Login</a></li>
-            </ul>
-        </nav>
-    </header>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="logo">City & State News Portal</div>
+        <div class="nav-links">
+            <a href="/">Home</a>
+            <a href="/news/">News</a>
+            <a href="/profile/">Profile</a>
+            <a href="/core/login/">Login</a>
+            <a href="/core/signup/">Signup</a>
+        </div>
+    </nav>
 
-    {% block content %}
-    {% endblock %}
+    {% if request.user.is_authenticated %}
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <ul>
+            <li><a href="/dashboard/admin/">Admin Dashboard</a></li>
+            <li><a href="/dashboard/editor/">Editor Dashboard</a></li>
+            <li><a href="/dashboard/reporter/">Reporter Dashboard</a></li>
+            <li><a href="/dashboard/user/">User Dashboard</a></li>
+            <li><a href="/news/">All News</a></li>
+            <li><a href="/profile/">Profile</a></li>
+            <li><a href="/core/logout/">Logout</a></li>
+        </ul>
+    </div>
+    {% endif %}
 
-    <!-- Footer -->
-    <footer class="footer">
-        <p>© 2026 CityNews. All Rights Reserved.</p>
-    </footer>
+    <div class="{% if request.user.is_authenticated %}content{% else %}main-content{% endif %}">
+        {% block content %}
+        {% endblock %}
+    </div>
 
 </body>
 </html>
