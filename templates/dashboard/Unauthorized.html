@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Access Denied — City &amp; State News{% endblock %}
+
+{% block content %}
+<div style="min-height: 70vh; display: flex; align-items: center; justify-content: center; padding: 40px 20px;">
+  <div style="text-align: center; max-width: 480px;">
+
+    {# Icon #}
+    <div style="width: 90px; height: 90px; background: #fee2e2; border-radius: 50%;
+                display: flex; align-items: center; justify-content: center;
+                margin: 0 auto 24px; font-size: 2.5rem;">
+      🔒
+    </div>
+
+    {# 403 badge #}
+    <div style="display: inline-block; background: var(--accent); color: #fff;
+                font-size: 0.7rem; font-weight: 800; letter-spacing: 2px;
+                text-transform: uppercase; padding: 4px 14px; border-radius: 20px;
+                margin-bottom: 16px;">
+      403 — Access Denied
+    </div>
+
+    <h2 style="font-family: 'Playfair Display', serif; font-size: 1.9rem;
+               font-weight: 900; color: var(--text-dark); margin-bottom: 12px;">
+      You don't have permission
+    </h2>
+
+    <p style="font-size: 0.92rem; color: var(--text-muted); line-height: 1.75; margin-bottom: 32px;">
+      Your account role
+      <strong style="color: var(--accent);">
+        ({{ request.user.role|capfirst }})
+      </strong>
+      does not have access to this page.<br/>
+      Please go back to your own dashboard.
+    </p>
+
+    {# Redirect to own dashboard #}
+    <div style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;">
+
+      {% if request.user.role == 'admin' %}
+        <a href="{% url 'admin_dashboard' %}" class="btn btn-primary btn-lg">
+          <i class="fa fa-gauge-high"></i> Go to Admin Dashboard
+        </a>
+
+      {% elif request.user.role == 'journalist' %}
+        <a href="{% url 'journalist_dashboard' %}" class="btn btn-primary btn-lg">
+          <i class="fa fa-gauge-high"></i> Go to My Dashboard
+        </a>
+
+      {% elif request.user.role == 'advertiser' %}
+        <a href="{% url 'advertiser_dashboard' %}" class="btn btn-primary btn-lg">
+          <i class="fa fa-gauge-high"></i> Go to My Dashboard
+        </a>
+
+      {% else %}
+        <a href="{% url 'home' %}" class="btn btn-primary btn-lg">
+          <i class="fa fa-home"></i> Go to Home
+        </a>
+      {% endif %}
+
+      <a href="{% url 'logout' %}" class="btn btn-outline btn-lg">
+        <i class="fa fa-right-from-bracket"></i> Logout
+      </a>
+
+    </div>
+
+  </div>
+</div>
+{% endblock %}

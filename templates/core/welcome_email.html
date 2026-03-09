@@ -60,7 +60,7 @@
 
   {# Body #}
   <div class="em-body">
-    <div class="em-greeting">Welcome, {{ user.first_name|default:user.username }}! 👋</div>
+    <div class="em-greeting">Welcome, {{ user.firstname|default:user.email }}! 👋</div>
     <p class="em-intro">
       Your account has been successfully created on the
       <strong>City &amp; State News Portal</strong>.
@@ -71,8 +71,8 @@
     <div class="info-box">
       <div class="info-label">Your Account Details</div>
       <div class="info-row">
-        <span class="info-key">Username</span>
-        <span class="info-val">{{ user.username }}</span>
+        <span class="info-key">Name</span>
+        <span class="info-val">{{ user.email }}</span>
       </div>
       <div class="info-row">
         <span class="info-key">Email</span>
@@ -88,7 +88,7 @@
       </div>
       <div class="info-row">
         <span class="info-key">Member Since</span>
-        <span class="info-val">{{ user.date_joined|date:"d F Y" }}</span>
+        <span class="info-val">{{ user.created_at|date:"d F Y" }}</span>
       </div>
     </div>
 

@@ -1,4 +1,4 @@
-from django.shortcuts import redirect, HttpResponse
+from django.shortcuts import redirect
 from functools import wraps
 
 
@@ -12,16 +12,16 @@ def role_required(allowed_roles=None):
         @wraps(view_func)
         def wrapper_func(request, *args, **kwargs):
 
-            # Login check
+            # ── Not logged in → login page ──
             if not request.user.is_authenticated:
                 return redirect("login")
 
-            # Role check
+            # ── Correct role → allow access ──
             if request.user.role in allowed_roles:
                 return view_func(request, *args, **kwargs)
 
-            # Unauthorized
-            return HttpResponse("You are not authorized to view this page")
+            # ── Wrong role → unauthorized page ──
+            return redirect("unauthorized")
 
         return wrapper_func
 

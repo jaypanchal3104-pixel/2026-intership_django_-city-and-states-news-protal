@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout  # logout import fixed
 from django.core.mail import EmailMultiAlternatives
 from django.conf import settings
 from django.template.loader import render_to_string
@@ -21,7 +21,6 @@ def userSignupView(request):
             try:
                 email = form.cleaned_data['email']
 
-                # Render the HTML email template
                 html_content = render_to_string(
                     'core/welcome_email.html',
                     {
@@ -30,7 +29,7 @@ def userSignupView(request):
                         'unsubscribe_url': '#',
                     }
                 )
-                plain_text = strip_tags(html_content)  # plain-text fallback
+                plain_text = strip_tags(html_content)
 
                 msg = EmailMultiAlternatives(
                     subject="Welcome to City & State News Portal",
@@ -39,10 +38,10 @@ def userSignupView(request):
                     to=[email],
                 )
                 msg.attach_alternative(html_content, "text/html")
-                msg.send(fail_silently=True)   # fail_silently=True so signup still works even if email fails
+                msg.send(fail_silently=False)  # False = show error if email fails
 
-            except Exception:
-                pass  # Do not block signup if email fails
+            except Exception as e:
+                print(f"EMAIL ERROR: {e}")  # terminal ma error dekhashhe
             # ────────────────────────────────────────────────────
 
             return redirect('login')
@@ -66,29 +65,21 @@ def userLoginView(request):
             email    = form.cleaned_data['email']
             password = form.cleaned_data['password']
 
-            # AbstractBaseUser with USERNAME_FIELD = 'email'
-            # → pass email as the 'username' kwarg to authenticate()
             user = authenticate(request, username=email, password=password)
 
             if user is not None:
                 login(request, user)
 
-                # ── Role-based redirect ──────────────────────────
                 role = user.role
 
                 if role == "admin":
                     return redirect("admin_dashboard")
-
                 elif role == "journalist":
                     return redirect("journalist_dashboard")
-
                 elif role == "advertiser":
                     return redirect("advertiser_dashboard")
-
                 else:
-                    # 'user' role (reader) → home page
                     return redirect("home")
-                # ────────────────────────────────────────────────
 
             else:
                 form.add_error(None, "Invalid Email or Password. Please try again.")
@@ -100,7 +91,9 @@ def userLoginView(request):
         return render(request, 'core/login.html', {'form': form})
 
 
-
+# ─────────────────────────────────────────────
+#  LOGOUT VIEW
+# ─────────────────────────────────────────────
 def userLogoutView(request):
     logout(request)
     return redirect('login')

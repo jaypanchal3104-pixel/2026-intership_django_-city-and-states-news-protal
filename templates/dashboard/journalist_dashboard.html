@@ -1,4 +1,4 @@
-{% extends 'dashboard/base.html' %}
+{% extends 'base.html' %}
 {% load static %}
 
 {% block title %}My Dashboard — City &amp; State News{% endblock %}
@@ -8,7 +8,7 @@
 <div class="page-header">
   <div>
     <h1 class="page-title">My Dashboard</h1>
-    <p class="page-subtitle">Hello, <strong>{{ user.get_full_name|default:user.username }}</strong>! Manage your articles here.</p>
+    <p class="page-subtitle">Hello, <strong>{{ user.firstname|default:user.email }}</strong>! Manage your articles here.</p>
   </div>
   {# URL: dashboard:journalist_news_create #}
   <a href="#" class="btn btn-primary btn-lg">
