@@ -2,44 +2,262 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}City & State News{% endblock %}</title>
-    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>{% block title %}City & State News Portal{% endblock %}</title>
+  <meta name="description" content="{% block meta_description %}Latest city and state news{% endblock %}"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=Source+Sans+3:wght@300;400;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <link rel="stylesheet" href="{% static 'css/style.css' %}"/>
+  {% block extra_css %}{% endblock %}
 </head>
 <body>
 
-    <!-- Navbar -->
-    <nav class="navbar">
-        <div class="logo">City & State News Portal</div>
-        <div class="nav-links">
-            <a href="/">Home</a>
-            <a href="/news/">News</a>
-            <a href="/profile/">Profile</a>
-            <a href="/core/login/">Login</a>
-            <a href="/core/signup/">Signup</a>
-        </div>
-    </nav>
+{% if user.is_authenticated %}
 
-    {% if request.user.is_authenticated %}
-    <!-- Sidebar -->
-    <div class="sidebar">
-        <ul>
-            <li><a href="/dashboard/admin/">Admin Dashboard</a></li>
-            <li><a href="/dashboard/editor/">Editor Dashboard</a></li>
-            <li><a href="/dashboard/reporter/">Reporter Dashboard</a></li>
-            <li><a href="/dashboard/user/">User Dashboard</a></li>
-            <li><a href="/news/">All News</a></li>
-            <li><a href="/profile/">Profile</a></li>
-            <li><a href="/core/logout/">Logout</a></li>
-        </ul>
+<div class="app-shell">
+  <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+
+  <aside class="sidebar" id="mainSidebar">
+    <div class="sidebar-brand">
+      <div class="brand-icon">N</div>
+      <div>
+        <div class="brand-name">City &amp; State</div>
+        <div class="brand-tagline">News Portal</div>
+      </div>
+    </div>
+    <nav class="sidebar-nav">
+
+      {% if user.role == 'admin' or user.is_superuser %}
+        <div class="sidebar-section-label">Dashboard</div>
+        <a href="#" class="{% if request.resolver_match.url_name == 'admin_dashboard' %}active{% endif %}">
+          <i class="fa fa-gauge-high"></i> Dashboard
+        </a>
+        <div class="sidebar-section-label">Content</div>
+        <a href="#"><i class="fa fa-newspaper"></i> All News
+          {% if pending_count %}<span class="nav-badge">{{ pending_count }}</span>{% endif %}
+        </a>
+        <a href="#"><i class="fa fa-clock"></i> Pending Approval</a>
+        <a href="#"><i class="fa fa-tags"></i> Categories</a>
+        <div class="sidebar-section-label">Geography</div>
+        <a href="#"><i class="fa fa-map"></i> States</a>
+        <a href="#"><i class="fa fa-city"></i> Cities</a>
+        <div class="sidebar-section-label">Users</div>
+        <a href="#"><i class="fa fa-pen-nib"></i> Journalists</a>
+        <a href="#"><i class="fa fa-users"></i> Readers</a>
+        <a href="#"><i class="fa fa-bullhorn"></i> Advertisers</a>
+        <div class="sidebar-section-label">System</div>
+        <a href="#"><i class="fa fa-comments"></i> Comments</a>
+        <a href="#"><i class="fa fa-chart-line"></i> Analytics</a>
+        <a href="#"><i class="fa fa-rectangle-ad"></i> Advertisements</a>
+
+      {% elif user.role == 'journalist' %}
+        <div class="sidebar-section-label">Dashboard</div>
+        <a href="#" class="{% if request.resolver_match.url_name == 'journalist_dashboard' %}active{% endif %}">
+          <i class="fa fa-gauge-high"></i> My Dashboard
+        </a>
+        <div class="sidebar-section-label">Articles</div>
+        <a href="#"><i class="fa fa-plus-circle"></i> Submit Article</a>
+        <a href="#"><i class="fa fa-newspaper"></i> My Articles</a>
+        <a href="#"><i class="fa fa-file-pen"></i> Drafts</a>
+        <div class="sidebar-section-label">Engage</div>
+        <a href="#"><i class="fa fa-comments"></i> Comments</a>
+        <a href="#"><i class="fa fa-user"></i> My Profile</a>
+
+      {% elif user.role == 'user' %}
+        <div class="sidebar-section-label">Browse</div>
+        <a href="#"><i class="fa fa-home"></i> Home</a>
+        <a href="#"><i class="fa fa-newspaper"></i> All News</a>
+        <a href="#"><i class="fa fa-tags"></i> By Category</a>
+        <a href="#"><i class="fa fa-city"></i> By City</a>
+        <a href="#"><i class="fa fa-map"></i> By State</a>
+        <div class="sidebar-section-label">My Account</div>
+        <a href="#"><i class="fa fa-bookmark"></i> Bookmarks</a>
+        <a href="#"><i class="fa fa-comment"></i> My Comments</a>
+        <a href="#"><i class="fa fa-user"></i> Profile</a>
+
+      {% elif user.role == 'advertiser' %}
+        <div class="sidebar-section-label">Dashboard</div>
+        <a href="#" class="{% if request.resolver_match.url_name == 'advertiser_dashboard' %}active{% endif %}">
+          <i class="fa fa-gauge-high"></i> Dashboard
+        </a>
+        <div class="sidebar-section-label">Campaigns</div>
+        <a href="#"><i class="fa fa-plus-circle"></i> New Campaign</a>
+        <a href="#"><i class="fa fa-rectangle-ad"></i> My Campaigns</a>
+        <div class="sidebar-section-label">Finance</div>
+        <a href="#"><i class="fa fa-chart-bar"></i> Analytics</a>
+        <a href="#"><i class="fa fa-credit-card"></i> Payments</a>
+        <a href="#"><i class="fa fa-user"></i> Profile</a>
+
+      {% endif %}
+
+    </nav>
+    <div class="sidebar-footer">© {% now "Y" %} City &amp; State News</div>
+  </aside>
+
+  <div class="main-content">
+    <header class="top-navbar">
+      <div style="display:flex; align-items:center; gap:12px; flex:1;">
+        <button class="sidebar-toggle" onclick="toggleSidebar()" aria-label="Menu">
+          <i class="fa fa-bars"></i>
+        </button>
+        <form action="#" method="GET" class="navbar-search" role="search">
+          <i class="fa fa-search"></i>
+          <input type="text" name="q" placeholder="Search news, cities, categories…"
+                 value="{{ request.GET.q }}" autocomplete="off"/>
+        </form>
+      </div>
+      <div class="navbar-right">
+        <a href="#" class="navbar-icon-btn" title="Notifications">
+          <i class="fa fa-bell"></i>
+          {% if unread_notifications %}<span class="notif-dot"></span>{% endif %}
+        </a>
+        <div class="dropdown">
+          <div class="user-menu" onclick="toggleDropdown(this)">
+            <div class="user-avatar">{{ user.email|first|upper }}</div>
+            <span class="user-name">{{ user.firstname|default:user.email }}</span>
+            <span class="user-role-badge role-{{ user.role|default:'user' }}">
+              {{ user.role|default:'user'|capfirst }}
+            </span>
+            <i class="fa fa-chevron-down" style="font-size:0.6rem; color:var(--text-muted);"></i>
+          </div>
+          <div class="dropdown-menu">
+            <a class="dropdown-item" href="#"><i class="fa fa-user"></i> Profile</a>
+            <a class="dropdown-item" href="#"><i class="fa fa-gear"></i> Settings</a>
+            <div class="dropdown-divider"></div>
+            <a class="dropdown-item" href="{% url 'logout' %}" style="color:var(--accent);">
+              <i class="fa fa-right-from-bracket"></i> Logout
+            </a>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    {% if messages %}
+    <div style="padding: 12px 26px 0;">
+      {% for message in messages %}
+      <div class="alert alert-{{ message.tags|default:'info' }}">
+        <i class="fa {% if message.tags == 'success' %}fa-circle-check{% elif message.tags == 'error' %}fa-circle-exclamation{% elif message.tags == 'warning' %}fa-triangle-exclamation{% else %}fa-circle-info{% endif %}"></i>
+        <div>{{ message }}</div>
+        <button class="alert-close" onclick="this.closest('.alert').remove()">✕</button>
+      </div>
+      {% endfor %}
     </div>
     {% endif %}
 
-    <div class="{% if request.user.is_authenticated %}content{% else %}main-content{% endif %}">
-        {% block content %}
-        {% endblock %}
-    </div>
+    <main class="page-content">
 
+{% endif %}
+
+{% block content %}{% endblock %}
+
+{% if user.is_authenticated %}
+
+    </main>
+  </div>
+</div>
+
+{% else %}
+
+{% if breaking_news %}
+<div class="breaking-ticker">
+  <div class="ticker-inner">
+    <div class="ticker-label">Breaking</div>
+    <div class="ticker-scroll">
+      <div class="ticker-track">
+        {% for item in breaking_news %}<span>{{ item.title }}</span>{% endfor %}
+        {% for item in breaking_news %}<span>{{ item.title }}</span>{% endfor %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endif %}
+
+<nav class="public-navbar">
+  <a href="#" class="pub-logo">
+    <span class="logo-badge">C&amp;S</span>
+    City<span class="logo-accent">&amp;</span>State
+    <span style="font-weight:300; font-size:0.95rem; margin-left:4px;">News</span>
+  </a>
+  <div class="pub-nav-links">
+    <a href="#" class="{% if request.resolver_match.url_name == 'home' %}active{% endif %}">Home</a>
+    <a href="#">News</a>
+    <a href="#">States</a>
+    <a href="#">Cities</a>
+    <a href="#">Categories</a>
+  </div>
+  <div class="pub-nav-actions">
+    <a href="{% url 'login' %}" class="btn btn-ghost-white">Login</a>
+    <a href="{% url 'signup' %}" class="btn btn-primary">Sign Up</a>
+  </div>
+</nav>
+
+{% if messages %}
+<div style="padding: 12px 30px 0; background: var(--bg-white);">
+  {% for message in messages %}
+  <div class="alert alert-{{ message.tags|default:'info' }}">
+    <i class="fa fa-circle-info"></i>
+    <div>{{ message }}</div>
+  </div>
+  {% endfor %}
+</div>
+{% endif %}
+
+<footer style="background:var(--primary); color:rgba(255,255,255,0.55); padding:36px 30px; margin-top:48px;">
+  <div style="max-width:1200px; margin:auto; display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:24px; margin-bottom:20px;">
+    <div>
+      <div style="font-family:'Playfair Display',serif; font-size:1.15rem; font-weight:900; color:#fff; margin-bottom:10px;">City &amp; State News</div>
+      <p style="font-size:0.8rem; line-height:1.7;">Your trusted source for local news across every city and state.</p>
+    </div>
+    <div>
+      <div style="font-weight:800; color:#fff; margin-bottom:9px; font-size:0.7rem; text-transform:uppercase; letter-spacing:0.08em;">Quick Links</div>
+      <div style="display:flex; flex-direction:column; gap:6px; font-size:0.8rem;">
+        <a href="#">Home</a>
+        <a href="#">Latest News</a>
+        <a href="#">About Us</a>
+        <a href="#">Contact</a>
+      </div>
+    </div>
+    <div>
+      <div style="font-weight:800; color:#fff; margin-bottom:9px; font-size:0.7rem; text-transform:uppercase; letter-spacing:0.08em;">Join Us</div>
+      <div style="display:flex; flex-direction:column; gap:6px; font-size:0.8rem;">
+        <a href="{% url 'signup' %}">Create Account</a>
+        <a href="{% url 'login' %}">Login</a>
+        <a href="#">Advertise With Us</a>
+        <a href="#">Submit a Story</a>
+      </div>
+    </div>
+  </div>
+  <div style="border-top:1px solid rgba(255,255,255,0.1); padding-top:16px; text-align:center; font-size:0.72rem;">
+    © {% now "Y" %} City &amp; State News Portal. All rights reserved.
+  </div>
+</footer>
+
+{% endif %}
+
+<script>
+  function toggleSidebar() {
+    document.getElementById('mainSidebar').classList.toggle('open');
+    document.getElementById('sidebarOverlay').classList.toggle('show');
+  }
+  function closeSidebar() {
+    document.getElementById('mainSidebar').classList.remove('open');
+    document.getElementById('sidebarOverlay').classList.remove('show');
+  }
+  function toggleDropdown(el) {
+    el.nextElementSibling.classList.toggle('show');
+  }
+  document.addEventListener('click', function(e) {
+    document.querySelectorAll('.dropdown-menu.show').forEach(function(menu) {
+      if (!menu.previousElementSibling.contains(e.target)) {
+        menu.classList.remove('show');
+      }
+    });
+  });
+</script>
+
+{% block extra_js %}{% endblock %}
 </body>
 </html>

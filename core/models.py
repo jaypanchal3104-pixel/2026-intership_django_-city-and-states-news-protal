@@ -29,9 +29,9 @@ class User(AbstractBaseUser):
 
     ROLE_CHOICES = (
         ('admin', 'Admin'),
-        ('editor', 'Editor'),
-        ('reporter', 'Reporter'),
-        ('user', 'User'),
+        ('journalist', 'Journalist'),   # 'reporter' → 'journalist',
+        ('advertiser', 'Advertiser'),   # new
+        ('user', 'User'),              # reader = user
     )
 
     role = models.CharField(max_length=10, choices=ROLE_CHOICES, default='user')

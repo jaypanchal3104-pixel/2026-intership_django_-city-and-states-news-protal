@@ -1,26 +1,153 @@
 {% extends 'base.html' %}
-{% block title %}Login{% endblock %}
+{% load static %}
+
+{% block title %}Login — City &amp; State News{% endblock %}
 
 {% block content %}
-<div class="auth-wrapper">
-    <div class="auth-card">
-        <h2>Login</h2>
+<div class="auth-page">
+  <div class="auth-wrap">
 
-        <form method="POST">
-            {% csrf_token %}
-
-            <div class="form-group">
-                {{ form.email.label_tag }}
-                {{ form.email }}
-            </div>
-
-            <div class="form-group">
-                {{ form.password.label_tag }}
-                {{ form.password }}
-            </div>
-
-            <button type="submit" class="auth-btn">Login</button>
-        </form>
+    {# ── Left panel ── #}
+    <div class="auth-left">
+      <h2>Stay Informed with Local News</h2>
+      <p>Join thousands of readers, journalists, and contributors who trust City &amp; State News for accurate, local reporting.</p>
+      <div class="auth-feat">
+        <div class="auth-feat-item">
+          <div class="auth-feat-icon"><i class="fa fa-newspaper"></i></div>
+          <span class="auth-feat-text">Read news from every city and state</span>
+        </div>
+        <div class="auth-feat-item">
+          <div class="auth-feat-icon"><i class="fa fa-bell"></i></div>
+          <span class="auth-feat-text">Get personalised daily news digest</span>
+        </div>
+        <div class="auth-feat-item">
+          <div class="auth-feat-icon"><i class="fa fa-comments"></i></div>
+          <span class="auth-feat-text">Comment and engage with stories</span>
+        </div>
+        <div class="auth-feat-item">
+          <div class="auth-feat-icon"><i class="fa fa-bookmark"></i></div>
+          <span class="auth-feat-text">Bookmark articles to read later</span>
+        </div>
+      </div>
     </div>
+
+    {# ── Right panel — login form ── #}
+    <div class="auth-right">
+      <div class="auth-logo">City <span>&amp;</span> State News</div>
+      <div class="auth-subtitle">Sign in to your account to continue</div>
+
+      {# Non-field errors (e.g. Invalid Email or Password) #}
+      {% if form.non_field_errors %}
+      <div class="alert alert-error">
+        <i class="fa fa-circle-exclamation"></i>
+        <div>{{ form.non_field_errors.as_text }}</div>
+      </div>
+      {% endif %}
+
+      <form method="POST" action="{% url 'login' %}">
+        {% csrf_token %}
+        <input type="hidden" name="next" value="{{ next }}"/>
+
+        {# ── Email ── #}
+        <div class="form-group">
+          <label class="form-label" for="id_email">Email Address</label>
+          <div class="input-icon">
+            <i class="fa fa-envelope"></i>
+            <input
+              type="email"
+              name="email"
+              id="id_email"
+              class="form-control {% if form.email.errors %}is-invalid{% endif %}"
+              placeholder="Enter your email address"
+              value="{{ form.email.value|default:'' }}"
+              autocomplete="email"
+              required
+              autofocus
+            />
+          </div>
+          {% if form.email.errors %}
+          <span class="form-error"><i class="fa fa-circle-exclamation"></i> {{ form.email.errors.0 }}</span>
+          {% endif %}
+        </div>
+
+        {# ── Password ── #}
+        <div class="form-group">
+          <label class="form-label" for="id_password">
+            Password
+            <a href="#" style="float:right; font-size:0.73rem; color:var(--accent); font-weight:700;">
+              Forgot password?
+            </a>
+          </label>
+          <div class="input-icon" style="position:relative;">
+            <i class="fa fa-lock"></i>
+            <input
+              type="password"
+              name="password"
+              id="id_password"
+              class="form-control {% if form.password.errors %}is-invalid{% endif %}"
+              placeholder="Enter your password"
+              style="padding-left:34px; padding-right:40px;"
+              autocomplete="current-password"
+              required
+            />
+            <button type="button" onclick="togglePwd()"
+              style="position:absolute; right:12px; top:50%; transform:translateY(-50%);
+                     background:none; border:none; cursor:pointer; color:var(--text-muted); font-size:0.8rem;">
+              <i class="fa fa-eye" id="pwdEyeIcon"></i>
+            </button>
+          </div>
+          {% if form.password.errors %}
+          <span class="form-error"><i class="fa fa-circle-exclamation"></i> {{ form.password.errors.0 }}</span>
+          {% endif %}
+        </div>
+
+        {# ── Remember Me ── #}
+        <div style="display:flex; align-items:center; gap:8px; margin-bottom:18px;">
+          <input type="checkbox" name="remember_me" id="rememberMe"
+                 style="accent-color:var(--accent); width:14px; height:14px;"/>
+          <label for="rememberMe" style="font-size:0.79rem; color:var(--text-muted); cursor:pointer;">
+            Remember me for 30 days
+          </label>
+        </div>
+
+        <button type="submit" class="btn btn-primary w-100 btn-lg">
+          <i class="fa fa-right-to-bracket"></i> Sign In
+        </button>
+      </form>
+
+      <div class="divider-or">or continue with</div>
+
+      <div class="social-grid">
+        <button class="social-btn">
+          <i class="fa-brands fa-google" style="color:#ea4335;"></i> Google
+        </button>
+        <button class="social-btn">
+          <i class="fa-brands fa-facebook" style="color:#1877f2;"></i> Facebook
+        </button>
+      </div>
+
+      <div class="auth-footer-text">
+        Don't have an account?
+        <a href="{% url 'signup' %}">Create one free →</a>
+      </div>
+
+    </div>{# /.auth-right #}
+  </div>{# /.auth-wrap #}
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function togglePwd() {
+  var field = document.getElementById('id_password');
+  var icon  = document.getElementById('pwdEyeIcon');
+  if (field.type === 'password') {
+    field.type = 'text';
+    icon.className = 'fa fa-eye-slash';
+  } else {
+    field.type = 'password';
+    icon.className = 'fa fa-eye';
+  }
+}
+</script>
 {% endblock %}

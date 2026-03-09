@@ -1,37 +1,207 @@
-{% extends 'base.html' %}
+{% extends 'dashboard/base.html' %}
+{% load static %}
+
+{% block title %}Home — City &amp; State News Portal{% endblock %}
 
 {% block content %}
 
-<section class="hero">
-    <div class="hero-content">
-        <h1>Latest Breaking News</h1>
-        <p>Stay updated with real-time City & State News.</p>
-        <button class="read-btn">Read More</button>
+{# ── Hero ── #}
+{% if featured_news %}
+<section class="hero-section">
+  <div style="position:relative; z-index:1; max-width:600px;">
+    <div class="hero-badge"><i class="fa fa-bolt"></i> Featured Story</div>
+    <h1 class="hero-title">{{ featured_news.title }}</h1>
+    <p class="hero-excerpt">{{ featured_news.description|striptags|truncatewords:28 }}</p>
+    <div class="hero-actions">
+      {# URL: dashboard:news_detail #}
+      <a href="#" class="btn btn-primary btn-lg">
+        {# href="#"  →  replace with {% url 'dashboard:news_detail' featured_news.pk %} #}
+        <i class="fa fa-newspaper"></i> Read Full Story
+      </a>
+      {# URL: dashboard:news_list #}
+      <a href="#" class="btn btn-ghost-white">All News →</a>
+      {# href="#"  →  replace with {% url 'dashboard:news_list' %} #}
     </div>
-</section>
-
-<section class="news-section">
-    <h2>Trending News</h2>
-
-    <div class="news-container">
-        <div class="news-card">
-            <img src="https://source.unsplash.com/400x250/?city" alt="">
-            <h3>City Development Updates</h3>
-            <p>New smart city project launched...</p>
-        </div>
-
-        <div class="news-card">
-            <img src="https://source.unsplash.com/400x250/?government" alt="">
-            <h3>State Government Policy</h3>
-            <p>New education reforms announced...</p>
-        </div>
-
-        <div class="news-card">
-            <img src="https://source.unsplash.com/400x250/?india" alt="">
-            <h3>National Headlines</h3>
-            <p>Major updates across the country...</p>
-        </div>
+    <div class="hero-meta">
+      <span><i class="fa fa-calendar"></i> {{ featured_news.publish_date|date:"d M Y" }}</span>
+      <span><i class="fa fa-city"></i> {{ featured_news.city }}</span>
+      <span><i class="fa fa-tag"></i> {{ featured_news.category }}</span>
     </div>
+  </div>
 </section>
+{% endif %}
+
+{# ── Category Filter Bar ── #}
+<div class="filter-bar">
+  <span style="font-size:0.68rem; font-weight:800; text-transform:uppercase; letter-spacing:0.08em; color:var(--text-muted);">Filter:</span>
+  {# URL: dashboard:home #}
+  <a href="#" class="cat-filter-btn {% if not request.GET.category %}active{% endif %}">All</a>
+  {# href="#"  →  replace with {% url 'dashboard:home' %} #}
+  {% for cat in categories %}
+  {# URL: dashboard:home ?category=cat.category_id #}
+  <a href="#" class="cat-filter-btn {% if request.GET.category == cat.category_id|stringformat:'s' %}active{% endif %}">
+    {# href="#"  →  replace with ?category={{ cat.category_id }} #}
+    {{ cat.category_name }}
+  </a>
+  {% endfor %}
+  <div style="margin-left:auto;">
+    <select class="form-control" style="width:auto; font-size:0.78rem; padding:5px 11px;"
+            onchange="location.href='?state='+this.value">
+      <option value="">All States</option>
+      {% for state in states %}
+      <option value="{{ state.state_id }}"
+              {% if request.GET.state == state.state_id|stringformat:'s' %}selected{% endif %}>
+        {{ state.state_name }}
+      </option>
+      {% endfor %}
+    </select>
+  </div>
+</div>
+
+{# ── Body Grid ── #}
+<div style="max-width:1280px; margin:0 auto; padding:28px 30px; display:grid; grid-template-columns:1fr 300px; gap:26px;">
+
+  {# News Grid #}
+  <div>
+    <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:18px;">
+      <h2 style="font-size:1.25rem;">Latest News</h2>
+      <span style="font-size:0.75rem; color:var(--text-muted);">
+        {{ news_list.paginator.count|default:0 }} articles
+      </span>
+    </div>
+
+    <div class="news-grid">
+      {% for news in news_list %}
+      <article class="news-card">
+        {% if news.image %}
+          <img src="{{ news.image }}" alt="{{ news.title }}" class="news-card-img" loading="lazy"/>
+        {% else %}
+          <div class="news-card-img-placeholder"><i class="fa fa-newspaper"></i></div>
+        {% endif %}
+        <div class="news-card-body">
+          <div class="news-card-meta">
+            <span class="cat-tag">{{ news.category }}</span>
+            <span class="news-date">{{ news.publish_date|date:"d M" }}</span>
+          </div>
+          <h3 class="news-card-title">
+            {# URL: dashboard:news_detail #}
+            <a href="#">
+              {# href="#"  →  replace with {% url 'dashboard:news_detail' news.pk %} #}
+              {{ news.title }}
+            </a>
+          </h3>
+          <p class="news-card-excerpt">{{ news.description|striptags|truncatewords:18 }}</p>
+        </div>
+        <div class="news-card-footer">
+          <span class="news-location"><i class="fa fa-location-dot"></i> {{ news.city }}</span>
+          {# URL: dashboard:news_detail #}
+          <a href="#" class="btn btn-sm btn-outline">Read →</a>
+          {# href="#"  →  replace with {% url 'dashboard:news_detail' news.pk %} #}
+        </div>
+      </article>
+      {% empty %}
+      <div style="grid-column:1/-1; text-align:center; padding:52px; color:var(--text-muted);">
+        <i class="fa fa-newspaper" style="font-size:2.5rem; margin-bottom:14px; display:block; opacity:0.25;"></i>
+        <p>No news articles found.</p>
+      </div>
+      {% endfor %}
+    </div>
+
+    {# Pagination #}
+    {% if news_list.has_other_pages %}
+    <div class="pagination">
+      {% if news_list.has_previous %}
+      <a href="?page={{ news_list.previous_page_number }}" class="page-link">
+        <i class="fa fa-chevron-left"></i>
+      </a>
+      {% endif %}
+      {% for num in news_list.paginator.page_range %}
+        {% if news_list.number == num %}
+          <span class="page-link active">{{ num }}</span>
+        {% elif num > news_list.number|add:'-3' and num < news_list.number|add:'3' %}
+          <a href="?page={{ num }}" class="page-link">{{ num }}</a>
+        {% endif %}
+      {% endfor %}
+      {% if news_list.has_next %}
+      <a href="?page={{ news_list.next_page_number }}" class="page-link">
+        <i class="fa fa-chevron-right"></i>
+      </a>
+      {% endif %}
+    </div>
+    {% endif %}
+  </div>
+
+  {# ── Right Sidebar ── #}
+  <aside>
+
+    {# Top Cities widget #}
+    <div class="card mb-3">
+      <div class="card-header"><span class="card-title"><i class="fa fa-city" style="color:var(--accent);"></i> Top Cities</span></div>
+      <div style="padding:8px;">
+        {% for city in top_cities %}
+        {# URL: dashboard:news_by_city ?city=city.city_id #}
+        <a href="#"
+          {# href="#"  →  replace with ?city={{ city.city_id }} #}
+           style="display:flex; align-items:center; gap:10px; padding:8px 10px;
+                  border-radius:7px; transition:var(--tr);"
+           onmouseover="this.style.background='var(--bg-light)'"
+           onmouseout="this.style.background=''">
+          <span style="width:26px; height:26px; background:var(--gold-light); border-radius:5px;
+                       display:flex; align-items:center; justify-content:center;
+                       font-size:0.65rem; font-weight:800; color:var(--accent); flex-shrink:0;">
+            {{ forloop.counter }}
+          </span>
+          <span style="font-size:0.83rem; font-weight:500; flex:1;">{{ city.city_name }}</span>
+          <span style="font-size:0.68rem; color:var(--text-muted);">{{ city.news_count }}</span>
+        </a>
+        {% endfor %}
+      </div>
+    </div>
+
+    {# Categories widget #}
+    <div class="card mb-3">
+      <div class="card-header"><span class="card-title"><i class="fa fa-tags" style="color:var(--accent);"></i> Categories</span></div>
+      <div style="padding:8px;">
+        {% for cat in categories %}
+        {# URL: dashboard:news_by_category ?category=cat.category_id #}
+        <a href="#"
+          {# href="#"  →  replace with ?category={{ cat.category_id }} #}
+           style="display:flex; align-items:center; justify-content:space-between;
+                  padding:8px 10px; border-radius:7px; font-size:0.83rem; transition:var(--tr);"
+           onmouseover="this.style.background='var(--bg-light)'"
+           onmouseout="this.style.background=''">
+          <span>{{ cat.category_name }}</span>
+          <span style="font-size:0.7rem; color:var(--text-muted);">{{ cat.news_count }}</span>
+        </a>
+        {% endfor %}
+      </div>
+    </div>
+
+    {# Newsletter widget #}
+    <div class="card" style="background:var(--primary); border:none;">
+      <div style="padding:18px; text-align:center;">
+        <i class="fa fa-envelope" style="font-size:1.8rem; color:var(--gold); margin-bottom:10px; display:block;"></i>
+        <h4 style="color:#fff; margin-bottom:6px;">Daily Digest</h4>
+        <p style="font-size:0.78rem; color:rgba(255,255,255,0.58); margin-bottom:14px; line-height:1.5;">
+          Get top stories from your city delivered every morning.
+        </p>
+        {# URL: dashboard:subscribe #}
+        <form action="#" method="POST">
+          {# action="#"  →  replace with {% url 'dashboard:subscribe' %} #}
+          {% csrf_token %}
+          <input type="email" name="email" class="form-control"
+                 placeholder="your@email.com"
+                 style="background:rgba(255,255,255,0.1); border-color:rgba(255,255,255,0.2);
+                        color:#fff; margin-bottom:9px;"
+                 required/>
+          <button type="submit" class="btn btn-primary w-100">
+            <i class="fa fa-bell"></i> Subscribe Free
+          </button>
+        </form>
+      </div>
+    </div>
+
+  </aside>
+</div>
 
 {% endblock %}

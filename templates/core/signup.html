@@ -1,51 +1,340 @@
 {% extends 'base.html' %}
-{% block title %}Signup{% endblock %}
+{% load static %}
+
+{% block title %}Create Account — City &amp; State News{% endblock %}
 
 {% block content %}
-<div class="auth-wrapper">
-    <div class="auth-card">
-        <h2>Create Account</h2>
+<div class="auth-page" style="align-items: flex-start; padding-top: 32px; padding-bottom: 32px;">
+  <div class="auth-wrap" style="max-width: 900px;">
 
-        <form method="POST">
-            {% csrf_token %}
-
-            <div class="form-group">
-                {{ form.email.label_tag }}
-                {{ form.email }}
-            </div>
-
-            <div class="form-group">
-                {{ form.role.label_tag }}
-                {{ form.role }}
-            </div>
-
-            <div class="form-group">
-                {{ form.firstname.label_tag }}
-                {{ form.firstname }}
-            </div>
-
-            <div class="form-group">
-                {{ form.lastname.label_tag }}
-                {{ form.lastname }}
-            </div>
-
-            <div class="form-group">
-                {{ form.gender.label_tag }}
-                {{ form.gender }}
-            </div>
-
-            <div class="form-group">
-                {{ form.password1.label_tag }}
-                {{ form.password1 }}
-            </div>
-
-            <div class="form-group">
-                {{ form.password2.label_tag }}
-                {{ form.password2 }}
-            </div>
-
-            <button type="submit" class="auth-btn">Signup</button>
-        </form>
+    {# ── Left panel ── #}
+    <div class="auth-left" style="max-width: 270px; flex-shrink: 0;">
+      <h2>Join Our Community</h2>
+      <p>Register as a Reader, Journalist, or Advertiser and get full access to the platform.</p>
+      <div class="auth-feat">
+        <div class="auth-feat-item">
+          <div class="auth-feat-icon" style="background:rgba(255,255,255,0.2);">
+            <i class="fa fa-user-circle"></i>
+          </div>
+          <div>
+            <div style="font-size:0.82rem; font-weight:700; color:#fff;">Reader</div>
+            <div style="font-size:0.72rem; color:rgba(255,255,255,0.65);">Browse, comment &amp; subscribe</div>
+          </div>
+        </div>
+        <div class="auth-feat-item">
+          <div class="auth-feat-icon" style="background:rgba(255,255,255,0.2);">
+            <i class="fa fa-pen-nib"></i>
+          </div>
+          <div>
+            <div style="font-size:0.82rem; font-weight:700; color:#fff;">Journalist</div>
+            <div style="font-size:0.72rem; color:rgba(255,255,255,0.65);">Submit &amp; publish articles</div>
+          </div>
+        </div>
+        <div class="auth-feat-item">
+          <div class="auth-feat-icon" style="background:rgba(255,255,255,0.2);">
+            <i class="fa fa-bullhorn"></i>
+          </div>
+          <div>
+            <div style="font-size:0.82rem; font-weight:700; color:#fff;">Advertiser</div>
+            <div style="font-size:0.72rem; color:rgba(255,255,255,0.65);">Create &amp; manage campaigns</div>
+          </div>
+        </div>
+      </div>
     </div>
+
+    {# ── Right panel — signup form ── #}
+    <div class="auth-right" style="flex:1; max-width: none; width: auto;">
+      <div class="auth-logo">Create Your <span>Account</span></div>
+      <div class="auth-subtitle">Free to join · Takes less than a minute</div>
+
+      {# Form errors summary #}
+      {% if form.errors %}
+      <div class="alert alert-error">
+        <i class="fa fa-circle-exclamation"></i>
+        <div>
+          <strong>Please fix the following:</strong>
+          {% for field, errors in form.errors.items %}
+            {% for error in errors %}
+            <div>• {{ error }}</div>
+            {% endfor %}
+          {% endfor %}
+        </div>
+      </div>
+      {% endif %}
+
+      <form method="POST" action="{% url 'signup' %}">
+        {% csrf_token %}
+
+        {# ── Row 1: First Name & Last Name ── #}
+        <div class="form-row-2">
+          <div class="form-group">
+            <label class="form-label" for="id_firstname">
+              First Name <span class="req">*</span>
+            </label>
+            <input
+              type="text"
+              name="firstname"
+              id="id_firstname"
+              class="form-control {% if form.firstname.errors %}is-invalid{% endif %}"
+              placeholder="Rahul"
+              value="{{ form.firstname.value|default:'' }}"
+              required
+            />
+            {% if form.firstname.errors %}
+            <span class="form-error"><i class="fa fa-circle-exclamation"></i> {{ form.firstname.errors.0 }}</span>
+            {% endif %}
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="id_lastname">Last Name</label>
+            <input
+              type="text"
+              name="lastname"
+              id="id_lastname"
+              class="form-control {% if form.lastname.errors %}is-invalid{% endif %}"
+              placeholder="Patel"
+              value="{{ form.lastname.value|default:'' }}"
+            />
+            {% if form.lastname.errors %}
+            <span class="form-error"><i class="fa fa-circle-exclamation"></i> {{ form.lastname.errors.0 }}</span>
+            {% endif %}
+          </div>
+        </div>
+
+        {# ── Email ── #}
+        <div class="form-group">
+          <label class="form-label" for="id_email">
+            Email Address <span class="req">*</span>
+          </label>
+          <div class="input-icon">
+            <i class="fa fa-envelope"></i>
+            <input
+              type="email"
+              name="email"
+              id="id_email"
+              class="form-control {% if form.email.errors %}is-invalid{% endif %}"
+              placeholder="rahul@example.com"
+              value="{{ form.email.value|default:'' }}"
+              autocomplete="email"
+              required
+            />
+          </div>
+          <span class="form-hint">A welcome email will be sent to this address.</span>
+          {% if form.email.errors %}
+          <span class="form-error"><i class="fa fa-circle-exclamation"></i> {{ form.email.errors.0 }}</span>
+          {% endif %}
+        </div>
+
+        {# ── Row 2: Mobile & Gender ── #}
+        <div class="form-row-2">
+          <div class="form-group">
+            <label class="form-label" for="id_mobile">
+              Mobile Number
+              <span style="color:var(--text-muted); font-weight:400;">(Optional)</span>
+            </label>
+            <div class="input-icon">
+              <i class="fa fa-phone"></i>
+              <input
+                type="tel"
+                name="mobile"
+                id="id_mobile"
+                class="form-control {% if form.mobile.errors %}is-invalid{% endif %}"
+                placeholder="+91 98765 43210"
+                value="{{ form.mobile.value|default:'' }}"
+              />
+            </div>
+            {% if form.mobile.errors %}
+            <span class="form-error"><i class="fa fa-circle-exclamation"></i> {{ form.mobile.errors.0 }}</span>
+            {% endif %}
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="id_gender">
+              Gender
+              <span style="color:var(--text-muted); font-weight:400;">(Optional)</span>
+            </label>
+            <div class="input-icon">
+              <i class="fa fa-venus-mars"></i>
+              <select
+                name="gender"
+                id="id_gender"
+                class="form-control {% if form.gender.errors %}is-invalid{% endif %}"
+                style="padding-left:34px;"
+              >
+                <option value="">-- Select Gender --</option>
+                <option value="male"   {% if form.gender.value == 'male'   %}selected{% endif %}>Male</option>
+                <option value="female" {% if form.gender.value == 'female' %}selected{% endif %}>Female</option>
+                <option value="other"  {% if form.gender.value == 'other'  %}selected{% endif %}>Other</option>
+              </select>
+            </div>
+            {% if form.gender.errors %}
+            <span class="form-error"><i class="fa fa-circle-exclamation"></i> {{ form.gender.errors.0 }}</span>
+            {% endif %}
+          </div>
+        </div>
+
+        {# ── Role Selection ── #}
+        <div class="form-group">
+          <label class="form-label">Register As <span class="req">*</span></label>
+          <div class="role-cards" id="roleCards">
+
+            <label class="role-card {% if form.role.value == 'user' or not form.role.value %}selected{% endif %}"
+                   onclick="selectRole(this,'user')">
+              <input type="radio" name="role" value="user"
+                     {% if form.role.value == 'user' or not form.role.value %}checked{% endif %}
+                     style="display:none;"/>
+              <i class="fa fa-user-circle"></i>
+              <div class="rc-name">Reader</div>
+              <div class="rc-desc">Browse &amp; comment</div>
+            </label>
+
+            <label class="role-card {% if form.role.value == 'journalist' %}selected{% endif %}"
+                   onclick="selectRole(this,'journalist')">
+              <input type="radio" name="role" value="journalist"
+                     {% if form.role.value == 'journalist' %}checked{% endif %}
+                     style="display:none;"/>
+              <i class="fa fa-pen-nib"></i>
+              <div class="rc-name">Journalist</div>
+              <div class="rc-desc">Submit articles</div>
+            </label>
+
+            <label class="role-card {% if form.role.value == 'advertiser' %}selected{% endif %}"
+                   onclick="selectRole(this,'advertiser')">
+              <input type="radio" name="role" value="advertiser"
+                     {% if form.role.value == 'advertiser' %}checked{% endif %}
+                     style="display:none;"/>
+              <i class="fa fa-bullhorn"></i>
+              <div class="rc-name">Advertiser</div>
+              <div class="rc-desc">Run campaigns</div>
+            </label>
+
+          </div>
+          {% if form.role.errors %}
+          <span class="form-error"><i class="fa fa-circle-exclamation"></i> {{ form.role.errors.0 }}</span>
+          {% endif %}
+        </div>
+
+        {# ── Passwords ── #}
+        <div class="form-row-2">
+          <div class="form-group">
+            <label class="form-label" for="id_password1">
+              Password <span class="req">*</span>
+            </label>
+            <div class="input-icon">
+              <i class="fa fa-lock"></i>
+              <input
+                type="password"
+                name="password1"
+                id="id_password1"
+                class="form-control {% if form.password1.errors %}is-invalid{% endif %}"
+                placeholder="Min 8 characters"
+                autocomplete="new-password"
+                oninput="checkStrength(this.value)"
+                style="padding-left:34px;"
+                required
+              />
+            </div>
+            <div class="pwd-strength">
+              <div class="pwd-fill" id="pwdFill" style="width:0%;"></div>
+            </div>
+            <span class="form-hint" id="pwdHint">Use letters, numbers &amp; symbols.</span>
+            {% if form.password1.errors %}
+            <span class="form-error"><i class="fa fa-circle-exclamation"></i> {{ form.password1.errors.0 }}</span>
+            {% endif %}
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="id_password2">
+              Confirm Password <span class="req">*</span>
+            </label>
+            <div class="input-icon">
+              <i class="fa fa-lock"></i>
+              <input
+                type="password"
+                name="password2"
+                id="id_password2"
+                class="form-control {% if form.password2.errors %}is-invalid{% endif %}"
+                placeholder="Repeat password"
+                autocomplete="new-password"
+                style="padding-left:34px;"
+                required
+              />
+            </div>
+            {% if form.password2.errors %}
+            <span class="form-error"><i class="fa fa-circle-exclamation"></i> {{ form.password2.errors.0 }}</span>
+            {% endif %}
+          </div>
+        </div>
+
+        {# ── Terms ── #}
+        <div style="display:flex; gap:8px; align-items:flex-start; margin-bottom:18px;">
+          <input type="checkbox" name="agree_terms" id="agreeTerms"
+                 style="accent-color:var(--accent); width:14px; height:14px; margin-top:3px; flex-shrink:0;"
+                 required/>
+          <label for="agreeTerms" style="font-size:0.77rem; color:var(--text-muted); cursor:pointer; line-height:1.5;">
+            I agree to the
+            <a href="#" style="color:var(--accent); font-weight:700;">Terms of Service</a>
+            and
+            <a href="#" style="color:var(--accent); font-weight:700;">Privacy Policy</a>
+          </label>
+        </div>
+
+        <button type="submit" class="btn btn-primary w-100 btn-lg">
+          <i class="fa fa-user-plus"></i> Create Account
+        </button>
+      </form>
+
+      <div class="auth-footer-text">
+        Already have an account?
+        <a href="{% url 'login' %}">Sign in →</a>
+      </div>
+
+    </div>{# /.auth-right #}
+  </div>{# /.auth-wrap #}
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function selectRole(el, role) {
+  document.querySelectorAll('.role-card').forEach(function(c) {
+    c.classList.remove('selected');
+    c.querySelector('i').style.color = 'var(--text-muted)';
+  });
+  el.classList.add('selected');
+  el.querySelector('input[type=radio]').checked = true;
+  el.querySelector('i').style.color = 'var(--accent)';
+}
+
+function checkStrength(val) {
+  var score = 0;
+  if (val.length >= 8)          score += 25;
+  if (/[A-Z]/.test(val))        score += 25;
+  if (/[0-9]/.test(val))        score += 25;
+  if (/[^A-Za-z0-9]/.test(val)) score += 25;
+
+  var bar  = document.getElementById('pwdFill');
+  var hint = document.getElementById('pwdHint');
+  bar.style.width = score + '%';
+
+  if (score < 25) {
+    bar.style.background = '#ef4444'; hint.textContent = 'Too weak — add more characters.';
+  } else if (score < 50) {
+    bar.style.background = '#f97316'; hint.textContent = 'Weak — try adding uppercase or numbers.';
+  } else if (score < 75) {
+    bar.style.background = '#f59e0b'; hint.textContent = 'Fair — add a symbol to strengthen it.';
+  } else {
+    bar.style.background = '#16a34a'; hint.textContent = 'Strong password ✓';
+  }
+}
+
+document.addEventListener('DOMContentLoaded', function () {
+  document.querySelectorAll('.role-card input[type=radio]').forEach(function (radio) {
+    if (radio.checked) {
+      radio.closest('.role-card').classList.add('selected');
+      radio.closest('.role-card').querySelector('i').style.color = 'var(--accent)';
+    }
+  });
+});
+</script>
 {% endblock %}

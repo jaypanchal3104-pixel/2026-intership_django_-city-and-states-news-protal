@@ -1,0 +1,120 @@
+{% extends 'dashboard/base.html' %}
+{% load static %}
+
+{% block title %}My Dashboard — City &amp; State News{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+  <div>
+    <h1 class="page-title">My Dashboard</h1>
+    <p class="page-subtitle">Hello, <strong>{{ user.get_full_name|default:user.username }}</strong>! Manage your articles here.</p>
+  </div>
+  {# URL: dashboard:journalist_news_create #}
+  <a href="#" class="btn btn-primary btn-lg">
+    {# href="#"  →  replace with {% url 'dashboard:journalist_news_create' %} #}
+    <i class="fa fa-plus-circle"></i> Submit New Article
+  </a>
+</div>
+
+{# Stats #}
+<div class="stats-grid">
+  <div class="stat-card" style="--s-color:#16a34a;">
+    <div class="stat-icon si-green"><i class="fa fa-newspaper"></i></div>
+    <div><div class="stat-val">{{ published_count|default:0 }}</div><div class="stat-lbl">Published</div></div>
+  </div>
+  <div class="stat-card" style="--s-color:#c2410c;">
+    <div class="stat-icon si-gold"><i class="fa fa-clock"></i></div>
+    <div><div class="stat-val">{{ pending_count|default:0 }}</div><div class="stat-lbl">Awaiting Review</div></div>
+  </div>
+  <div class="stat-card" style="--s-color:#475569;">
+    <div class="stat-icon si-slate"><i class="fa fa-file-pen"></i></div>
+    <div><div class="stat-val">{{ draft_count|default:0 }}</div><div class="stat-lbl">Drafts</div></div>
+  </div>
+  <div class="stat-card" style="--s-color:var(--accent);">
+    <div class="stat-icon si-red"><i class="fa fa-eye"></i></div>
+    <div><div class="stat-val">{{ total_views|default:0 }}</div><div class="stat-lbl">Total Views</div></div>
+  </div>
+</div>
+
+{# Articles table #}
+<div class="card">
+  <div class="card-header">
+    <span class="card-title">My Articles</span>
+    <div style="display:flex; gap:6px;">
+      {# URL: dashboard:journalist_my_news — status filters #}
+      <a href="#" class="btn btn-sm {% if not request.GET.status or request.GET.status == 'all' %}btn-primary{% else %}btn-outline{% endif %}">All</a>
+      <a href="#" class="btn btn-sm {% if request.GET.status == 'published' %}btn-primary{% else %}btn-outline{% endif %}">Published</a>
+      <a href="#" class="btn btn-sm {% if request.GET.status == 'pending'   %}btn-primary{% else %}btn-outline{% endif %}">Pending</a>
+      <a href="#" class="btn btn-sm {% if request.GET.status == 'draft'     %}btn-primary{% else %}btn-outline{% endif %}">Drafts</a>
+      {# All href="#"  →  replace with {% url 'dashboard:journalist_my_news' %}?status=... #}
+    </div>
+  </div>
+  <div class="table-responsive">
+    <table class="table">
+      <thead>
+        <tr><th>Title</th><th>Category</th><th>City</th><th>Status</th><th>Date</th><th>Views</th><th>Actions</th></tr>
+      </thead>
+      <tbody>
+        {% for news in my_news %}
+        <tr>
+          <td style="max-width:220px;">
+            <div style="font-weight:600; font-family:'Playfair Display',serif; font-size:0.85rem;
+                        white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
+              {{ news.title }}
+            </div>
+          </td>
+          <td><span class="cat-tag" style="font-size:0.57rem;">{{ news.category }}</span></td>
+          <td style="font-size:0.8rem;">{{ news.city }}</td>
+          <td>
+            {% if news.status == 'published' %}<span class="badge badge-published">Published</span>
+            {% elif news.status == 'pending'  %}<span class="badge badge-pending">Pending</span>
+            {% elif news.status == 'draft'    %}<span class="badge badge-draft">Draft</span>
+            {% else %}<span class="badge badge-rejected">Rejected</span>{% endif %}
+          </td>
+          <td style="font-size:0.72rem; color:var(--text-muted); font-family:'JetBrains Mono',monospace;">
+            {{ news.publish_date|date:"d M Y"|default:"—" }}
+          </td>
+          <td style="font-size:0.8rem; font-family:'JetBrains Mono',monospace;">
+            {{ news.views|default:"—" }}
+          </td>
+          <td>
+            <div style="display:flex; gap:4px;">
+              {# URL: dashboard:news_detail #}
+              <a href="#" class="btn btn-icon" title="View">
+                {# href="#"  →  replace with {% url 'dashboard:news_detail' news.pk %} #}
+                <i class="fa fa-eye"></i>
+              </a>
+              {# URL: dashboard:journalist_news_edit #}
+              <a href="#" class="btn btn-icon edit" title="Edit">
+                {# href="#"  →  replace with {% url 'dashboard:journalist_news_edit' news.pk %} #}
+                <i class="fa fa-pen"></i>
+              </a>
+              {# URL: dashboard:journalist_news_delete #}
+              <a href="#" class="btn btn-icon delete" title="Delete"
+                 onclick="return confirm('Delete this article?')">
+                {# href="#"  →  replace with {% url 'dashboard:journalist_news_delete' news.pk %} #}
+                <i class="fa fa-trash"></i>
+              </a>
+            </div>
+          </td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="7" style="text-align:center; padding:44px; color:var(--text-muted);">
+            <i class="fa fa-newspaper" style="font-size:2.5rem; margin-bottom:12px; display:block; opacity:0.2;"></i>
+            <p>You haven't written any articles yet.</p>
+            {# URL: dashboard:journalist_news_create #}
+            <a href="#" class="btn btn-primary mt-2">
+              {# href="#"  →  replace with {% url 'dashboard:journalist_news_create' %} #}
+              Write Your First Article
+            </a>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+{% endblock %}

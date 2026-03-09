@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Welcome — City &amp; State News</title>
+<style>
+  body{margin:0;padding:0;background:#f4f1ec;font-family:Georgia,'Times New Roman',serif}
+  *{box-sizing:border-box}
+  .wrap{background:#f4f1ec;padding:32px 16px}
+  .container{max-width:600px;margin:0 auto;background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 8px 32px rgba(0,0,0,.10)}
+  .em-header{background:linear-gradient(135deg,#1a1a2e,#16213e);padding:42px 40px;text-align:center}
+  .em-badge{display:inline-block;background:#e63946;color:#fff;font-size:10px;font-weight:800;letter-spacing:2px;text-transform:uppercase;padding:4px 14px;border-radius:20px;margin-bottom:14px;font-family:Arial,sans-serif}
+  .em-logo{font-size:27px;font-weight:700;color:#fff;margin-bottom:4px}
+  .em-logo span{color:#e63946}
+  .em-tagline{font-size:11px;color:rgba(255,255,255,.4);letter-spacing:1px;font-family:Arial,sans-serif}
+  .em-divline{width:44px;height:2px;background:#e63946;margin:14px auto 0;border-radius:2px}
+  .em-body{padding:38px 40px;background:#fff}
+  .em-greeting{font-size:22px;font-weight:700;color:#1a1a2e;margin-bottom:12px}
+  .em-intro{font-family:Arial,sans-serif;font-size:14px;color:#3a3a4a;line-height:1.75;margin-bottom:24px}
+  .info-box{background:#f9f7f4;border:1px solid #e5e0d8;border-left:4px solid #e63946;border-radius:9px;padding:16px 18px;margin-bottom:24px}
+  .info-label{font-family:Arial,sans-serif;font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:1.5px;color:#6b7280;margin-bottom:10px}
+  .info-row{font-family:Arial,sans-serif;font-size:13px;padding:7px 0;border-bottom:1px solid #e5e0d8;display:flex;justify-content:space-between}
+  .info-row:last-child{border-bottom:none}
+  .info-key{color:#6b7280}
+  .info-val{font-weight:700;color:#1a1a2e}
+  .role-chip{display:inline-block;padding:2px 10px;border-radius:20px;font-size:11px;font-weight:800}
+  .chip-reader{background:#dcfce7;color:#166534}
+  .chip-journalist{background:#e0f2fe;color:#0369a1}
+  .chip-advertiser{background:#f3e8ff;color:#7c3aed}
+  .feat-title{font-size:17px;font-weight:700;color:#1a1a2e;margin-bottom:14px}
+  .feat-item{display:flex;gap:12px;align-items:flex-start;margin-bottom:12px;padding:13px;background:#f9f7f4;border:1px solid #e5e0d8;border-radius:9px}
+  .feat-ico{width:36px;height:36px;background:#fee2e2;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;text-align:center;line-height:36px}
+  .feat-head{font-family:Arial,sans-serif;font-size:13px;font-weight:700;color:#1a1a2e;margin-bottom:2px}
+  .feat-desc{font-family:Arial,sans-serif;font-size:12px;color:#6b7280;line-height:1.5}
+  .cta-wrap{text-align:center;margin:28px 0}
+  .cta-btn{display:inline-block;background:#e63946;color:#fff;font-family:Arial,sans-serif;font-size:14px;font-weight:700;padding:13px 38px;border-radius:7px;text-decoration:none}
+  .cta-note{font-family:Arial,sans-serif;font-size:11px;color:#9ca3af;margin-top:8px}
+  .help-box{background:#fffbeb;border:1px solid #fcd34d;border-radius:9px;padding:14px 16px;font-family:Arial,sans-serif;font-size:12px;color:#92400e;line-height:1.6}
+  .em-footer{background:#1a1a2e;padding:24px 40px;text-align:center}
+  .foot-logo{font-size:15px;font-weight:700;color:#fff;margin-bottom:8px}
+  .foot-logo span{color:#e63946}
+  .foot-links{margin-bottom:10px}
+  .foot-links a{font-family:Arial,sans-serif;font-size:11px;color:rgba(255,255,255,.4);margin:0 8px;text-decoration:none}
+  .foot-copy{font-family:Arial,sans-serif;font-size:10px;color:rgba(255,255,255,.25);line-height:1.75}
+  .unsub{color:rgba(255,255,255,.3);text-decoration:underline}
+</style>
+</head>
+<body>
+<div class="wrap">
+<div class="container">
+
+  {# Header #}
+  <div class="em-header">
+    <div class="em-badge">🎉 Welcome Aboard</div>
+    <div class="em-logo">City <span>&amp;</span> State News</div>
+    <div class="em-tagline">YOUR LOCAL NEWS, EVERYWHERE</div>
+    <div class="em-divline"></div>
+  </div>
+
+  {# Body #}
+  <div class="em-body">
+    <div class="em-greeting">Welcome, {{ user.first_name|default:user.username }}! 👋</div>
+    <p class="em-intro">
+      Your account has been successfully created on the
+      <strong>City &amp; State News Portal</strong>.
+      You're now part of a growing community staying connected to local news across every city and state.
+    </p>
+
+    {# Account info box #}
+    <div class="info-box">
+      <div class="info-label">Your Account Details</div>
+      <div class="info-row">
+        <span class="info-key">Username</span>
+        <span class="info-val">{{ user.username }}</span>
+      </div>
+      <div class="info-row">
+        <span class="info-key">Email</span>
+        <span class="info-val">{{ user.email }}</span>
+      </div>
+      <div class="info-row">
+        <span class="info-key">Account Type</span>
+        <span class="info-val">
+          <span class="role-chip chip-{{ user.role|default:'reader' }}">
+            {{ user.role|default:'reader'|capfirst }}
+          </span>
+        </span>
+      </div>
+      <div class="info-row">
+        <span class="info-key">Member Since</span>
+        <span class="info-val">{{ user.date_joined|date:"d F Y" }}</span>
+      </div>
+    </div>
+
+    {# Features — role-specific #}
+    <div class="feat-title">What you can do now:</div>
+
+    {% if user.role == 'journalist' %}
+    <div class="feat-item">
+      <div class="feat-ico">✍️</div>
+      <div>
+        <div class="feat-head">Submit Articles</div>
+        <div class="feat-desc">Write and submit news articles for review by editors. Share stories that matter to your community.</div>
+      </div>
+    </div>
+    <div class="feat-item">
+      <div class="feat-ico">📂</div>
+      <div>
+        <div class="feat-head">Manage Your Content</div>
+        <div class="feat-desc">Track published and pending articles, respond to comments, and update your stories.</div>
+      </div>
+    </div>
+    <div class="feat-item">
+      <div class="feat-ico">💬</div>
+      <div>
+        <div class="feat-head">Engage with Readers</div>
+        <div class="feat-desc">Respond to comments and build a loyal readership within your city or state.</div>
+      </div>
+    </div>
+
+    {% elif user.role == 'advertiser' %}
+    <div class="feat-item">
+      <div class="feat-ico">📣</div>
+      <div>
+        <div class="feat-head">Create Ad Campaigns</div>
+        <div class="feat-desc">Design and launch campaigns targeted to specific cities, states, or news categories.</div>
+      </div>
+    </div>
+    <div class="feat-item">
+      <div class="feat-ico">📊</div>
+      <div>
+        <div class="feat-head">Track Performance</div>
+        <div class="feat-desc">Monitor impressions, clicks, and engagement for all active campaigns in real time.</div>
+      </div>
+    </div>
+    <div class="feat-item">
+      <div class="feat-ico">💳</div>
+      <div>
+        <div class="feat-head">Online Payments</div>
+        <div class="feat-desc">Pay for advertising slots securely online and manage your billing history.</div>
+      </div>
+    </div>
+
+    {% else %}{# Reader #}
+    <div class="feat-item">
+      <div class="feat-ico">📰</div>
+      <div>
+        <div class="feat-head">Read Local News</div>
+        <div class="feat-desc">Browse news from your city, state, and across India. Filter by category or location.</div>
+      </div>
+    </div>
+    <div class="feat-item">
+      <div class="feat-ico">💬</div>
+      <div>
+        <div class="feat-head">Join the Conversation</div>
+        <div class="feat-desc">Comment on articles, share stories on social media, and rate news content.</div>
+      </div>
+    </div>
+    <div class="feat-item">
+      <div class="feat-ico">🔔</div>
+      <div>
+        <div class="feat-head">Daily Digest</div>
+        <div class="feat-desc">Subscribe to daily email updates for the latest news from your favourite cities.</div>
+      </div>
+    </div>
+    {% endif %}
+
+    {# CTA button — URL: dashboard:home #}
+    <div class="cta-wrap">
+      <a href="{{ site_url }}{% url 'login' %}" class="cta-btn">→ Go to City &amp; State News</a>
+      <div class="cta-note">Your account is ready — no further verification needed.</div>
+    </div>
+
+    <div class="help-box">
+      <strong>Need help?</strong>
+      Reply to this email or visit our
+      <a href="{{ site_url }}/contact/" style="color:#e63946; font-weight:700;">Help Center</a>.
+      Our support team typically responds within 24 hours.
+    </div>
+  </div>
+
+  {# Footer #}
+  <div class="em-footer">
+    <div class="foot-logo">City <span>&amp;</span> State News</div>
+    <div class="foot-links">
+      <a href="{{ site_url }}{% url 'login' %}">Login</a>
+      <a href="#">About</a>
+      <a href="#">Contact</a>
+      <a href="#">Privacy</a>
+    </div>
+    <div class="foot-copy">
+      You received this email because you registered at City &amp; State News Portal.<br/>
+      © {% now "Y" %} City &amp; State News Portal. All rights reserved.<br/><br/>
+      <a href="{{ unsubscribe_url }}" class="unsub">Unsubscribe from emails</a>
+    </div>
+  </div>
+
+</div>
+</div>
+</body>
+</html>
