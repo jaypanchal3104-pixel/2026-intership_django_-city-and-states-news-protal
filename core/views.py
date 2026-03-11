@@ -97,3 +97,7 @@ def userLoginView(request):
 def userLogoutView(request):
     logout(request)
     return redirect('login')
+
+
+def homeView(request):
+    return render(request, 'core/homepage.html')

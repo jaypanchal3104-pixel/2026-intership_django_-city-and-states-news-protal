@@ -1,0 +1,655 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>City &amp; State News Portal — Home</title>
+  <meta name="description" content="Your trusted source for hyperlocal news across every city and state in India."/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=Source+Sans+3:wght@300;400;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <style>
+    /* ── Variables ── */
+    :root {
+      --primary: #1a1a2e;
+      --primary-light: #16213e;
+      --accent: #e63946;
+      --accent-hover: #c1121f;
+      --gold: #f4a261;
+      --gold-light: #fde8d0;
+      --text-dark: #1a1a2e;
+      --text-body: #3a3a4a;
+      --text-muted: #6b7280;
+      --bg-light: #f9f7f4;
+      --bg-white: #ffffff;
+      --border: #e5e0d8;
+      --shadow-sm: 0 1px 4px rgba(0,0,0,0.07);
+      --shadow-md: 0 4px 16px rgba(0,0,0,0.10);
+      --shadow-lg: 0 8px 32px rgba(0,0,0,0.14);
+      --radius: 8px;
+      --radius-lg: 13px;
+      --tr: all 0.22s cubic-bezier(.4,0,.2,1);
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 16px; scroll-behavior: smooth; }
+    body { font-family: 'Source Sans 3', sans-serif; background: var(--bg-light); color: var(--text-body); min-height: 100vh; line-height: 1.65; }
+    a { color: inherit; text-decoration: none; transition: var(--tr); }
+    img { max-width: 100%; display: block; }
+
+    /* ── Scrollbar ── */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: var(--bg-light); }
+    ::-webkit-scrollbar-thumb { background: #c9c3ba; border-radius: 3px; }
+
+    /* ════════════════ BREAKING TICKER ════════════════ */
+    .breaking-ticker { background: var(--accent); overflow: hidden; }
+    .ticker-inner { display: flex; align-items: center; }
+    .ticker-label {
+      background: var(--primary); color: var(--gold);
+      font-size: 0.6rem; font-weight: 800; letter-spacing: 0.12em;
+      text-transform: uppercase; padding: 8px 16px; white-space: nowrap; flex-shrink: 0;
+    }
+    .ticker-track {
+      display: inline-flex; gap: 48px; white-space: nowrap;
+      font-size: 0.75rem; color: #fff; font-weight: 500;
+      animation: tickerScroll 26s linear infinite; padding: 8px 20px;
+    }
+    @keyframes tickerScroll { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+    /* ════════════════ PUBLIC NAVBAR ════════════════ */
+    .public-navbar {
+      background: var(--primary); height: 65px;
+      display: flex; align-items: center; padding: 0 30px;
+      position: sticky; top: 0; z-index: 200;
+      box-shadow: 0 2px 20px rgba(0,0,0,0.25);
+    }
+    .pub-logo {
+      font-family: 'Playfair Display', serif; font-size: 1.18rem; font-weight: 900;
+      color: #fff; display: flex; align-items: center; gap: 9px; margin-right: 28px;
+    }
+    .pub-logo .logo-badge {
+      background: var(--accent); padding: 3px 10px; border-radius: 6px;
+      font-size: 0.9rem; color: #fff; font-weight: 900;
+    }
+    .pub-logo .logo-accent { color: var(--accent); }
+    .pub-nav-links { display: flex; gap: 2px; flex: 1; }
+    .pub-nav-links a {
+      color: rgba(255,255,255,0.65); font-size: 0.84rem; font-weight: 500;
+      padding: 7px 13px; border-radius: 6px; transition: var(--tr);
+    }
+    .pub-nav-links a:hover, .pub-nav-links a.active { color: #fff; background: rgba(255,255,255,0.1); }
+    .pub-nav-actions { display: flex; align-items: center; gap: 8px; margin-left: auto; }
+    .btn { display: inline-flex; align-items: center; gap: 6px; padding: 9px 19px; border-radius: var(--radius); font-size: 0.84rem; font-weight: 700; font-family: 'Source Sans 3', sans-serif; cursor: pointer; border: none; transition: var(--tr); line-height: 1; text-decoration: none; }
+    .btn-primary { background: var(--accent); color: #fff; }
+    .btn-primary:hover { background: var(--accent-hover); color: #fff; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(230,57,70,0.32); }
+    .btn-ghost-white { background: transparent; color: #fff; border: 1.5px solid rgba(255,255,255,0.35); }
+    .btn-ghost-white:hover { background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.7); color: #fff; }
+    .btn-lg { padding: 12px 26px; font-size: 0.92rem; }
+    .btn-outline { background: transparent; color: var(--text-dark); border: 1.5px solid #c9c3ba; }
+    .btn-outline:hover { border-color: var(--accent); color: var(--accent); }
+    .btn-sm { padding: 6px 13px; font-size: 0.76rem; }
+
+    /* hamburger */
+    .nav-toggle { display: none; background: none; border: none; cursor: pointer; color: rgba(255,255,255,0.8); font-size: 1.1rem; padding: 6px; }
+    @media (max-width: 768px) {
+      .pub-nav-links { display: none; }
+      .nav-toggle { display: block; }
+      .pub-nav-links.open { display: flex; flex-direction: column; position: absolute; top: 65px; left: 0; right: 0; background: var(--primary); padding: 12px 20px; z-index: 300; gap: 4px; }
+    }
+
+    /* ════════════════ HERO ════════════════ */
+    .hero-section {
+      background: linear-gradient(135deg, #1a1a2e 0%, #2d3561 55%, #1a1a2e 100%);
+      padding: 70px 32px 58px; position: relative; overflow: hidden;
+    }
+    .hero-section::before {
+      content: ''; position: absolute; top: -30%; right: -5%;
+      width: 500px; height: 500px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(230,57,70,0.14) 0%, transparent 68%);
+      pointer-events: none;
+    }
+    .hero-section::after {
+      content: ''; position: absolute; bottom: -20%; left: 10%;
+      width: 300px; height: 300px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(244,162,97,0.08) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .hero-inner { position: relative; z-index: 1; max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: center; }
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: rgba(244,162,97,0.15); border: 1px solid rgba(244,162,97,0.4);
+      color: var(--gold); font-size: 0.62rem; font-weight: 800; letter-spacing: 0.12em;
+      text-transform: uppercase; padding: 4px 12px; border-radius: 20px; margin-bottom: 16px;
+    }
+    .hero-title {
+      font-family: 'Playfair Display', serif; font-size: 2.8rem; font-weight: 900;
+      color: #fff; line-height: 1.15; margin-bottom: 16px;
+    }
+    .hero-title em { color: var(--gold); font-style: italic; }
+    .hero-excerpt { font-size: 1rem; color: rgba(255,255,255,0.65); line-height: 1.75; max-width: 460px; margin-bottom: 28px; }
+    .hero-actions { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 28px; }
+    .hero-stats { display: flex; gap: 28px; flex-wrap: wrap; }
+    .hero-stat-num { font-family: 'JetBrains Mono', monospace; font-size: 1.4rem; font-weight: 700; color: var(--gold); line-height: 1; }
+    .hero-stat-lbl { font-size: 0.68rem; color: rgba(255,255,255,0.42); margin-top: 3px; text-transform: uppercase; letter-spacing: 0.08em; }
+
+    /* Hero right: news preview cards */
+    .hero-cards { display: flex; flex-direction: column; gap: 12px; }
+    .hero-card {
+      background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 11px; padding: 14px 16px; display: flex; gap: 12px; align-items: center;
+      transition: var(--tr); cursor: pointer;
+    }
+    .hero-card:hover { background: rgba(255,255,255,0.1); transform: translateX(4px); }
+    .hero-card-icon { width: 40px; height: 40px; border-radius: 9px; background: rgba(230,57,70,0.2); display: flex; align-items: center; justify-content: center; font-size: 1rem; color: var(--gold); flex-shrink: 0; }
+    .hero-card-cat { font-size: 0.58rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; color: var(--accent); margin-bottom: 3px; }
+    .hero-card-title { font-size: 0.83rem; font-weight: 600; color: rgba(255,255,255,0.85); line-height: 1.3; }
+    .hero-card-meta { font-size: 0.65rem; color: rgba(255,255,255,0.35); margin-top: 4px; }
+
+    @media (max-width: 900px) {
+      .hero-inner { grid-template-columns: 1fr; gap: 32px; }
+      .hero-title { font-size: 2rem; }
+    }
+
+    /* ════════════════ CTA SECTION ════════════════ */
+    .cta-section {
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 60%, #0f3460 100%);
+      padding: 60px 30px; text-align: center; position: relative; overflow: hidden;
+    }
+    .cta-section::before {
+      content: ''; position: absolute; top: -60px; left: -80px;
+      width: 280px; height: 280px;
+      background: radial-gradient(circle, rgba(230,57,70,0.12) 0%, transparent 70%);
+      border-radius: 50%; pointer-events: none;
+    }
+    .cta-section::after {
+      content: ''; position: absolute; bottom: -40px; right: -50px;
+      width: 220px; height: 220px;
+      background: radial-gradient(circle, rgba(244,162,97,0.10) 0%, transparent 70%);
+      border-radius: 50%; pointer-events: none;
+    }
+    .cta-inner { position: relative; z-index: 1; max-width: 680px; margin: 0 auto; }
+    .cta-pill {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: rgba(230,57,70,0.15); border: 1px solid rgba(230,57,70,0.35);
+      border-radius: 30px; padding: 5px 16px; margin-bottom: 22px;
+    }
+    .cta-pill-dot { width: 7px; height: 7px; background: #e63946; border-radius: 50%; animation: pulseDot 1.8s ease-in-out infinite; }
+    @keyframes pulseDot { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.5;transform:scale(0.7)} }
+    .cta-pill-text { font-size: 0.68rem; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; color: rgba(255,255,255,0.7); }
+    .cta-title { font-family: 'Playfair Display', serif; font-size: 2.1rem; font-weight: 900; color: #fff; margin-bottom: 14px; line-height: 1.25; }
+    .cta-desc { font-size: 0.95rem; color: rgba(255,255,255,0.55); max-width: 480px; margin: 0 auto 32px; line-height: 1.75; }
+    .cta-btns { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; margin-bottom: 28px; }
+    .cta-btn-primary {
+      display: inline-flex; align-items: center; gap: 9px;
+      background: #e63946; color: #fff; font-weight: 700; font-size: 0.96rem;
+      padding: 13px 30px; border-radius: 9px; letter-spacing: 0.02em;
+      transition: var(--tr); box-shadow: 0 4px 18px rgba(230,57,70,0.4);
+    }
+    .cta-btn-primary:hover { background: #c1121f; transform: translateY(-2px); box-shadow: 0 8px 24px rgba(230,57,70,0.5); color: #fff; }
+    .cta-btn-ghost {
+      display: inline-flex; align-items: center; gap: 9px;
+      background: transparent; color: #fff; font-weight: 600; font-size: 0.96rem;
+      padding: 13px 30px; border-radius: 9px; border: 1px solid rgba(255,255,255,0.3);
+      transition: var(--tr);
+    }
+    .cta-btn-ghost:hover { background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.6); color: #fff; transform: translateY(-2px); }
+    .cta-perks { display: flex; justify-content: center; gap: 28px; flex-wrap: wrap; }
+    .cta-perk { display: flex; align-items: center; gap: 7px; color: rgba(255,255,255,0.42); font-size: 0.78rem; }
+    .cta-perk i { color: var(--gold); }
+
+    /* ════════════════ ABOUT SECTION ════════════════ */
+    .about-section { background: #fff; padding: 68px 30px; border-bottom: 1px solid var(--border); }
+    .section-eyebrow { font-size: 0.68rem; font-weight: 800; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); margin-bottom: 10px; }
+    .section-title { font-family: 'Playfair Display', serif; font-size: 2rem; font-weight: 900; color: var(--text-dark); margin-bottom: 14px; }
+    .section-desc { font-size: 0.96rem; color: var(--text-muted); max-width: 540px; margin: 0 auto 46px; line-height: 1.8; }
+
+    /* Feature cards */
+    .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 22px; max-width: 1100px; margin: 0 auto 52px; }
+    .feature-card {
+      background: var(--bg-light); border-radius: 14px; padding: 28px 24px;
+      border: 1px solid var(--border); transition: var(--tr); cursor: default;
+    }
+    .feature-card:hover { transform: translateY(-5px); box-shadow: 0 10px 32px rgba(0,0,0,0.09); }
+    .feature-icon {
+      width: 48px; height: 48px; background: var(--gold-light); border-radius: 12px;
+      display: flex; align-items: center; justify-content: center; margin-bottom: 16px;
+    }
+    .feature-icon i { color: var(--accent); font-size: 1.2rem; }
+    .feature-title { font-family: 'Playfair Display', serif; font-size: 1rem; font-weight: 700; color: var(--text-dark); margin-bottom: 9px; }
+    .feature-desc { font-size: 0.84rem; color: var(--text-muted); line-height: 1.7; }
+
+    /* Role panel */
+    .roles-panel {
+      background: linear-gradient(135deg, #1a1a2e, #16213e);
+      border-radius: 18px; padding: 38px 32px;
+      max-width: 1100px; margin: 0 auto;
+    }
+    .roles-header { text-align: center; margin-bottom: 28px; }
+    .roles-header h3 { font-family: 'Playfair Display', serif; color: #fff; font-size: 1.45rem; margin-bottom: 7px; }
+    .roles-header p { font-size: 0.83rem; color: rgba(255,255,255,0.4); }
+    .roles-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 16px; }
+    .role-card {
+      background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 12px; padding: 22px 18px; text-align: center; transition: var(--tr);
+    }
+    .role-card:hover { background: rgba(255,255,255,0.1); transform: translateY(-3px); }
+    .role-card i { font-size: 1.7rem; color: var(--gold); margin-bottom: 11px; display: block; }
+    .role-card-name { font-weight: 700; color: #fff; font-size: 0.9rem; margin-bottom: 7px; }
+    .role-card-desc { font-size: 0.74rem; color: rgba(255,255,255,0.42); line-height: 1.65; }
+
+    /* ════════════════ SAMPLE NEWS SECTION ════════════════ */
+    .news-section { padding: 56px 30px; background: var(--bg-light); }
+    .news-section-inner { max-width: 1100px; margin: 0 auto; }
+    .section-top { display: flex; align-items: flex-end; justify-content: space-between; margin-bottom: 26px; flex-wrap: wrap; gap: 12px; }
+    .news-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); gap: 20px; }
+    .news-card {
+      background: var(--bg-white); border: 1px solid var(--border);
+      border-radius: var(--radius-lg); overflow: hidden; box-shadow: var(--shadow-sm); transition: var(--tr);
+    }
+    .news-card:hover { box-shadow: var(--shadow-lg); transform: translateY(-3px); }
+    .news-card-img { width: 100%; height: 175px; object-fit: cover; }
+    .news-card-img-placeholder {
+      width: 100%; height: 175px;
+      background: linear-gradient(135deg, var(--primary) 0%, #2d3561 100%);
+      display: flex; align-items: center; justify-content: center;
+      color: rgba(255,255,255,0.12); font-size: 2.8rem;
+    }
+    .news-card-body { padding: 16px; }
+    .news-card-meta { display: flex; align-items: center; gap: 8px; margin-bottom: 9px; }
+    .cat-tag { font-size: 0.6rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.07em; padding: 2px 8px; border-radius: 20px; background: var(--accent); color: #fff; }
+    .news-date { font-size: 0.68rem; color: var(--text-muted); font-family: 'JetBrains Mono', monospace; }
+    .news-card-title { font-family: 'Playfair Display', serif; font-size: 0.95rem; font-weight: 700; color: var(--text-dark); line-height: 1.3; margin-bottom: 7px; }
+    .news-card-excerpt { font-size: 0.8rem; color: var(--text-muted); line-height: 1.6; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+    .news-card-footer { padding: 10px 16px; border-top: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+    .news-location { font-size: 0.7rem; color: var(--text-muted); display: flex; align-items: center; gap: 4px; }
+
+    /* ════════════════ FOOTER ════════════════ */
+    footer {
+      background: var(--primary); color: rgba(255,255,255,0.55);
+      padding: 44px 30px 28px;
+    }
+    .footer-grid {
+      max-width: 1100px; margin: 0 auto;
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 28px; margin-bottom: 24px;
+    }
+    .footer-brand-name { font-family: 'Playfair Display', serif; font-size: 1.15rem; font-weight: 900; color: #fff; margin-bottom: 10px; }
+    .footer-brand-desc { font-size: 0.8rem; line-height: 1.75; }
+    .footer-col-title { font-weight: 800; color: #fff; margin-bottom: 12px; font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.1em; }
+    .footer-links { display: flex; flex-direction: column; gap: 8px; }
+    .footer-links a { font-size: 0.8rem; color: rgba(255,255,255,0.45); transition: var(--tr); }
+    .footer-links a:hover { color: var(--gold); }
+    .footer-bottom { max-width: 1100px; margin: 0 auto; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 18px; text-align: center; font-size: 0.72rem; color: rgba(255,255,255,0.28); }
+
+    /* ── Animations ── */
+    @keyframes fadeInUp { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
+    .animate-up { animation: fadeInUp 0.6s ease forwards; }
+    .delay-1 { animation-delay: 0.12s; }
+    .delay-2 { animation-delay: 0.22s; }
+    .delay-3 { animation-delay: 0.32s; }
+  </style>
+</head>
+<body>
+
+<!-- ══════════════════════════════
+     BREAKING NEWS TICKER
+══════════════════════════════ -->
+<div class="breaking-ticker">
+  <div class="ticker-inner">
+    <div class="ticker-label">⚡ Breaking</div>
+    <div style="overflow:hidden; flex:1;">
+      <div class="ticker-track">
+        <span>📌 New infrastructure bill passed in state assembly — roads and bridges across 14 cities to benefit</span>
+        <span>📌 City council approves 200-acre green belt expansion in metro outskirts</span>
+        <span>📌 Local journalist wins national award for investigative reporting on civic issues</span>
+        <span>📌 State government launches free digital literacy program for 50,000 residents</span>
+        <span>📌 New infrastructure bill passed in state assembly — roads and bridges across 14 cities to benefit</span>
+        <span>📌 City council approves 200-acre green belt expansion in metro outskirts</span>
+        <span>📌 Local journalist wins national award for investigative reporting on civic issues</span>
+        <span>📌 State government launches free digital literacy program for 50,000 residents</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════
+     PUBLIC NAVBAR
+══════════════════════════════ -->
+<nav class="public-navbar">
+  <a href="{% url 'homepage' %}" class="pub-logo">
+    <span class="logo-badge">C&amp;S</span>
+    City<span class="logo-accent">&amp;</span>State
+    <span style="font-weight:300; font-size:0.95rem; margin-left:4px;">News</span>
+  </a>
+
+  <div class="pub-nav-links" id="navLinks">
+    <a href="{% url 'homepage' %}" class="active">Home</a>
+    <a href="{% url 'login' %}">News</a>
+    <a href="{% url 'login' %}">States</a>
+    <a href="{% url 'login' %}">Cities</a>
+    <a href="{% url 'login' %}">Categories</a>
+  </div>
+
+  <div class="pub-nav-actions">
+    <a href="{% url 'login' %}" class="btn btn-ghost-white"><i class="fa fa-right-to-bracket"></i> Login</a>
+    <a href="{% url 'signup' %}" class="btn btn-primary"><i class="fa fa-user-plus"></i> Sign Up</a>
+    <button class="nav-toggle" onclick="document.getElementById('navLinks').classList.toggle('open')" aria-label="Menu">
+      <i class="fa fa-bars"></i>
+    </button>
+  </div>
+</nav>
+
+<!-- ══════════════════════════════
+     HERO SECTION
+══════════════════════════════ -->
+<section class="hero-section">
+  <div class="hero-inner">
+
+    <!-- Left: Headline & CTA -->
+    <div class="animate-up">
+      <div class="hero-badge"><i class="fa fa-bolt"></i> Your City. Your Stories.</div>
+      <h1 class="hero-title">
+        Hyperlocal News,<br/><em>Nationwide Reach</em>
+      </h1>
+      <p class="hero-excerpt">
+        Stay informed with verified, city-level news from journalists across every state. Filter by location, category, and topic — all in one place.
+      </p>
+      <div class="hero-actions">
+        <a href="{% url 'signup' %}" class="btn btn-primary btn-lg">
+          <i class="fa fa-user-plus"></i> Create Free Account
+        </a>
+        <a href="{% url 'login' %}" class="btn btn-ghost-white btn-lg">
+          <i class="fa fa-right-to-bracket"></i> Login
+        </a>
+      </div>
+      <div class="hero-stats">
+        <div>
+          <div class="hero-stat-num">500+</div>
+          <div class="hero-stat-lbl">Cities Covered</div>
+        </div>
+        <div>
+          <div class="hero-stat-num">1,200+</div>
+          <div class="hero-stat-lbl">Verified Journalists</div>
+        </div>
+        <div>
+          <div class="hero-stat-num">28</div>
+          <div class="hero-stat-lbl">States &amp; UTs</div>
+        </div>
+        <div>
+          <div class="hero-stat-num">50K+</div>
+          <div class="hero-stat-lbl">Monthly Readers</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right: Sample news preview cards -->
+    <div class="hero-cards animate-up delay-1">
+      <div class="hero-card">
+        <div class="hero-card-icon"><i class="fa fa-city"></i></div>
+        <div>
+          <div class="hero-card-cat">Politics</div>
+          <div class="hero-card-title">State assembly passes new urban development bill with record majority</div>
+          <div class="hero-card-meta"><i class="fa fa-location-dot"></i> Ahmedabad &nbsp;·&nbsp; <i class="fa fa-calendar"></i> Today</div>
+        </div>
+      </div>
+      <div class="hero-card">
+        <div class="hero-card-icon"><i class="fa fa-leaf"></i></div>
+        <div>
+          <div class="hero-card-cat">Environment</div>
+          <div class="hero-card-title">City expands green belt by 200 acres — largest in a decade</div>
+          <div class="hero-card-meta"><i class="fa fa-location-dot"></i> Surat &nbsp;·&nbsp; <i class="fa fa-calendar"></i> Yesterday</div>
+        </div>
+      </div>
+      <div class="hero-card">
+        <div class="hero-card-icon"><i class="fa fa-graduation-cap"></i></div>
+        <div>
+          <div class="hero-card-cat">Education</div>
+          <div class="hero-card-title">50,000 students enrolled in state's free digital literacy initiative</div>
+          <div class="hero-card-meta"><i class="fa fa-location-dot"></i> Vadodara &nbsp;·&nbsp; <i class="fa fa-calendar"></i> 10 Mar</div>
+        </div>
+      </div>
+      <div class="hero-card">
+        <div class="hero-card-icon"><i class="fa fa-briefcase"></i></div>
+        <div>
+          <div class="hero-card-cat">Business</div>
+          <div class="hero-card-title">New IT park to create 10,000 jobs in eastern district</div>
+          <div class="hero-card-meta"><i class="fa fa-location-dot"></i> Rajkot &nbsp;·&nbsp; <i class="fa fa-calendar"></i> 9 Mar</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ══════════════════════════════
+     JOIN CTA BANNER
+══════════════════════════════ -->
+<section class="cta-section">
+  <div class="cta-inner animate-up delay-2">
+    <div class="cta-pill">
+      <span class="cta-pill-dot"></span>
+      <span class="cta-pill-text">Join Our Community — It's Free</span>
+    </div>
+    <h2 class="cta-title">Stay Informed. Stay Connected.</h2>
+    <p class="cta-desc">
+      Create a free account to bookmark stories, follow your city, and receive your personalized daily news digest — or login to pick up where you left off.
+    </p>
+    <div class="cta-btns">
+      <a href="{% url 'signup' %}" class="cta-btn-primary">
+        <i class="fa fa-user-plus"></i> Create Free Account
+      </a>
+      <a href="{% url 'login' %}" class="cta-btn-ghost">
+        <i class="fa fa-right-to-bracket"></i> Login to Your Account
+      </a>
+    </div>
+    <div class="cta-perks">
+      <div class="cta-perk"><i class="fa fa-shield-halved"></i> 100% Free to Join</div>
+      <div class="cta-perk"><i class="fa fa-bell"></i> Daily Digest</div>
+      <div class="cta-perk"><i class="fa fa-bookmark"></i> Save Bookmarks</div>
+      <div class="cta-perk"><i class="fa fa-pen-nib"></i> Journalist Access</div>
+      <div class="cta-perk"><i class="fa fa-bullhorn"></i> Advertise Locally</div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════
+     ABOUT / PROJECT DETAILS
+══════════════════════════════ -->
+<section class="about-section">
+  <div style="text-align:center; max-width:600px; margin:0 auto;">
+    <div class="section-eyebrow">About The Portal</div>
+    <h2 class="section-title">Built for Local Voices</h2>
+    <p class="section-desc">
+      City &amp; State News Portal connects verified local journalists with readers across every city and state — bringing you the stories that matter most, right where you live.
+    </p>
+  </div>
+
+  <!-- Feature Cards -->
+  <div class="features-grid">
+    <div class="feature-card">
+      <div class="feature-icon"><i class="fa fa-map-location-dot"></i></div>
+      <div class="feature-title">City-Level Coverage</div>
+      <p class="feature-desc">Browse news filtered by your specific city or state. Every article is tagged to a precise location so you never miss what's happening locally.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon"><i class="fa fa-pen-nib"></i></div>
+      <div class="feature-title">Verified Journalists</div>
+      <p class="feature-desc">All content is written by credentialed journalists and reviewed by our editorial team before going live — ensuring accuracy and trust.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon"><i class="fa fa-tags"></i></div>
+      <div class="feature-title">Category Filtering</div>
+      <p class="feature-desc">From politics and business to culture and sports — filter stories by category to read exactly what interests you, when you want it.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon"><i class="fa fa-bullhorn"></i></div>
+      <div class="feature-title">Advertiser Platform</div>
+      <p class="feature-desc">Businesses run geo-targeted campaigns reaching audiences in specific cities and states with full performance analytics and dashboards.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon"><i class="fa fa-bookmark"></i></div>
+      <div class="feature-title">Save &amp; Bookmark</div>
+      <p class="feature-desc">Registered readers can bookmark stories, follow preferred cities, and build a personalized feed of the news topics they care about most.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon"><i class="fa fa-envelope"></i></div>
+      <div class="feature-title">Daily Digest Email</div>
+      <p class="feature-desc">Subscribe to receive a morning digest of top stories from your city, delivered straight to your inbox — free, no spam, unsubscribe anytime.</p>
+    </div>
+  </div>
+
+  <!-- Who Is This For -->
+  <div class="roles-panel">
+    <div class="roles-header">
+      <h3>Who Is This Platform For?</h3>
+      <p>Four distinct roles — one powerful local news ecosystem</p>
+    </div>
+    <div class="roles-grid">
+      <div class="role-card">
+        <i class="fa fa-users"></i>
+        <div class="role-card-name">Readers</div>
+        <div class="role-card-desc">Read, bookmark, and comment on stories from cities and states across the country</div>
+      </div>
+      <div class="role-card">
+        <i class="fa fa-pen-nib"></i>
+        <div class="role-card-name">Journalists</div>
+        <div class="role-card-desc">Submit and manage articles with a full editorial workflow and draft management</div>
+      </div>
+      <div class="role-card">
+        <i class="fa fa-bullhorn"></i>
+        <div class="role-card-name">Advertisers</div>
+        <div class="role-card-desc">Run geo-targeted campaigns with performance analytics and city-level audience reach</div>
+      </div>
+      <div class="role-card">
+        <i class="fa fa-shield-halved"></i>
+        <div class="role-card-name">Admins</div>
+        <div class="role-card-desc">Oversee content approval, manage users, geographies, categories, and advertisements</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════
+     SAMPLE NEWS CARDS
+══════════════════════════════ -->
+<section class="news-section">
+  <div class="news-section-inner">
+    <div class="section-top">
+      <div>
+        <div class="section-eyebrow">Latest Articles</div>
+        <h2 style="font-family:'Playfair Display',serif; font-size:1.55rem; font-weight:900; color:var(--text-dark);">Recent Stories</h2>
+      </div>
+      <a href="{% url 'login' %}" class="btn btn-outline">View All News →</a>
+    </div>
+
+    <div class="news-grid">
+      <!-- Card 1 -->
+      <article class="news-card">
+        <div class="news-card-img-placeholder"><i class="fa fa-city"></i></div>
+        <div class="news-card-body">
+          <div class="news-card-meta">
+            <span class="cat-tag">Politics</span>
+            <span class="news-date">11 Mar 2026</span>
+          </div>
+          <h3 class="news-card-title">State assembly passes landmark urban housing bill</h3>
+          <p class="news-card-excerpt">The bill aims to provide affordable housing solutions to over 2 lakh families across 14 major cities in the coming three years.</p>
+        </div>
+        <div class="news-card-footer">
+          <span class="news-location"><i class="fa fa-location-dot"></i> Ahmedabad</span>
+          <a href="{% url 'login' %}" class="btn btn-sm btn-outline">Read →</a>
+        </div>
+      </article>
+
+      <!-- Card 2 -->
+      <article class="news-card">
+        <div class="news-card-img-placeholder"><i class="fa fa-leaf"></i></div>
+        <div class="news-card-body">
+          <div class="news-card-meta">
+            <span class="cat-tag">Environment</span>
+            <span class="news-date">10 Mar 2026</span>
+          </div>
+          <h3 class="news-card-title">City council approves 200-acre green belt expansion</h3>
+          <p class="news-card-excerpt">The expansion is described as the largest urban greening initiative in a decade, covering industrial outskirts and riverfront zones.</p>
+        </div>
+        <div class="news-card-footer">
+          <span class="news-location"><i class="fa fa-location-dot"></i> Surat</span>
+          <a href="{% url 'login' %}" class="btn btn-sm btn-outline">Read →</a>
+        </div>
+      </article>
+
+      <!-- Card 3 -->
+      <article class="news-card">
+        <div class="news-card-img-placeholder"><i class="fa fa-graduation-cap"></i></div>
+        <div class="news-card-body">
+          <div class="news-card-meta">
+            <span class="cat-tag">Education</span>
+            <span class="news-date">9 Mar 2026</span>
+          </div>
+          <h3 class="news-card-title">50,000 students enrolled in free digital literacy drive</h3>
+          <p class="news-card-excerpt">The state government initiative provides tablet devices and internet access to government school students in 8 districts.</p>
+        </div>
+        <div class="news-card-footer">
+          <span class="news-location"><i class="fa fa-location-dot"></i> Vadodara</span>
+          <a href="{% url 'login' %}" class="btn btn-sm btn-outline">Read →</a>
+        </div>
+      </article>
+    </div>
+
+    <!-- Login prompt -->
+    <div style="margin-top:32px; text-align:center; background:#fff; border-radius:14px; padding:28px 20px; border:1px solid var(--border);">
+      <i class="fa fa-lock" style="font-size:1.5rem; color:var(--text-muted); margin-bottom:10px; display:block; opacity:0.4;"></i>
+      <p style="font-size:0.9rem; color:var(--text-muted); margin-bottom:16px;">
+        Login or create a free account to read full articles, bookmark stories, and access unlimited news.
+      </p>
+      <div style="display:flex; gap:12px; justify-content:center; flex-wrap:wrap;">
+        <a href="{% url 'signup' %}" class="btn btn-primary"><i class="fa fa-user-plus"></i> Create Account — Free</a>
+        <a href="{% url 'login' %}" class="btn btn-outline"><i class="fa fa-right-to-bracket"></i> Login</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════
+     FOOTER
+══════════════════════════════ -->
+<footer>
+  <div class="footer-grid">
+    <div>
+      <div class="footer-brand-name">City &amp; State News</div>
+      <p class="footer-brand-desc">Your trusted source for hyperlocal news across every city and state — powered by verified journalists.</p>
+    </div>
+    <div>
+      <div class="footer-col-title">Quick Links</div>
+      <div class="footer-links">
+        <a href="{% url 'homepage' %}">Home</a>
+        <a href="{% url 'login' %}">Latest News</a>
+        <a href="{% url 'login' %}">States</a>
+        <a href="{% url 'login' %}">Cities</a>
+      </div>
+    </div>
+    <div>
+      <div class="footer-col-title">Join Us</div>
+      <div class="footer-links">
+        <a href="{% url 'signup' %}">Create Account</a>
+        <a href="{% url 'login' %}">Login</a>
+        <a href="{% url 'signup' %}">Become a Journalist</a>
+        <a href="{% url 'signup' %}">Advertise With Us</a>
+      </div>
+    </div>
+    <div>
+      <div class="footer-col-title">Contact</div>
+      <div class="footer-links">
+        <a href="#">About Us</a>
+        <a href="#">Editorial Policy</a>
+        <a href="#">Privacy Policy</a>
+        <a href="#">Support</a>
+      </div>
+    </div>
+  </div>
+  <div class="footer-bottom">© 2026 City &amp; State News Portal. All rights reserved.</div>
+</footer>
+
+</body>
+</html>
