@@ -10,9 +10,7 @@
     <h1 class="page-title">My Dashboard</h1>
     <p class="page-subtitle">Hello, <strong>{{ user.firstname|default:user.email }}</strong>! Manage your articles here.</p>
   </div>
-  {# URL: dashboard:journalist_news_create #}
-  <a href="#" class="btn btn-primary btn-lg">
-    {# href="#"  →  replace with {% url 'dashboard:journalist_news_create' %} #}
+  <a href="{% url 'news_create' %}" class="btn btn-primary btn-lg">
     <i class="fa fa-plus-circle"></i> Submit New Article
   </a>
 </div>
@@ -42,12 +40,14 @@
   <div class="card-header">
     <span class="card-title">My Articles</span>
     <div style="display:flex; gap:6px;">
-      {# URL: dashboard:journalist_my_news — status filters #}
-      <a href="#" class="btn btn-sm {% if not request.GET.status or request.GET.status == 'all' %}btn-primary{% else %}btn-outline{% endif %}">All</a>
-      <a href="#" class="btn btn-sm {% if request.GET.status == 'published' %}btn-primary{% else %}btn-outline{% endif %}">Published</a>
-      <a href="#" class="btn btn-sm {% if request.GET.status == 'pending'   %}btn-primary{% else %}btn-outline{% endif %}">Pending</a>
-      <a href="#" class="btn btn-sm {% if request.GET.status == 'draft'     %}btn-primary{% else %}btn-outline{% endif %}">Drafts</a>
-      {# All href="#"  →  replace with {% url 'dashboard:journalist_my_news' %}?status=... #}
+      <a href="{% url 'journalist_dashboard' %}"
+         class="btn btn-sm {% if not request.GET.status %}btn-primary{% else %}btn-outline{% endif %}">All</a>
+      <a href="{% url 'journalist_dashboard' %}?status=published"
+         class="btn btn-sm {% if request.GET.status == 'published' %}btn-primary{% else %}btn-outline{% endif %}">Published</a>
+      <a href="{% url 'journalist_dashboard' %}?status=pending"
+         class="btn btn-sm {% if request.GET.status == 'pending' %}btn-primary{% else %}btn-outline{% endif %}">Pending</a>
+      <a href="{% url 'journalist_dashboard' %}?status=draft"
+         class="btn btn-sm {% if request.GET.status == 'draft' %}btn-primary{% else %}btn-outline{% endif %}">Drafts</a>
     </div>
   </div>
   <div class="table-responsive">
@@ -80,20 +80,14 @@
           </td>
           <td>
             <div style="display:flex; gap:4px;">
-              {# URL: dashboard:news_detail #}
-              <a href="#" class="btn btn-icon" title="View">
-                {# href="#"  →  replace with {% url 'dashboard:news_detail' news.pk %} #}
+              <a href="{% url 'news_detail' news.news_id %}" class="btn btn-icon" title="View">
                 <i class="fa fa-eye"></i>
               </a>
-              {# URL: dashboard:journalist_news_edit #}
-              <a href="#" class="btn btn-icon edit" title="Edit">
-                {# href="#"  →  replace with {% url 'dashboard:journalist_news_edit' news.pk %} #}
+              <a href="{% url 'news_edit' news.news_id %}" class="btn btn-icon edit" title="Edit">
                 <i class="fa fa-pen"></i>
               </a>
-              {# URL: dashboard:journalist_news_delete #}
-              <a href="#" class="btn btn-icon delete" title="Delete"
+              <a href="{% url 'news_delete' news.news_id %}" class="btn btn-icon delete" title="Delete"
                  onclick="return confirm('Delete this article?')">
-                {# href="#"  →  replace with {% url 'dashboard:journalist_news_delete' news.pk %} #}
                 <i class="fa fa-trash"></i>
               </a>
             </div>
@@ -104,9 +98,7 @@
           <td colspan="7" style="text-align:center; padding:44px; color:var(--text-muted);">
             <i class="fa fa-newspaper" style="font-size:2.5rem; margin-bottom:12px; display:block; opacity:0.2;"></i>
             <p>You haven't written any articles yet.</p>
-            {# URL: dashboard:journalist_news_create #}
-            <a href="#" class="btn btn-primary mt-2">
-              {# href="#"  →  replace with {% url 'dashboard:journalist_news_create' %} #}
+            <a href="{% url 'news_create' %}" class="btn btn-primary" style="margin-top:10px;">
               Write Your First Article
             </a>
           </td>

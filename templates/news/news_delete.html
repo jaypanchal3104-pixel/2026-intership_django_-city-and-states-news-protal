@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Delete Article — City & State News{% endblock %}
+
+{% block content %}
+<div style="min-height:60vh; display:flex; align-items:center; justify-content:center; padding:40px 20px;">
+  <div class="card" style="max-width:480px; width:100%;">
+    <div class="card-header">
+      <span class="card-title" style="color:var(--accent);">
+        <i class="fa fa-triangle-exclamation"></i> Delete Article
+      </span>
+    </div>
+    <div style="padding:28px;">
+      <p style="font-size:0.93rem; color:var(--text-body); margin-bottom:20px; line-height:1.7;">
+        Are you sure you want to delete the article:<br/>
+        <strong style="font-family:'Playfair Display',serif; color:var(--text-dark);">
+          "{{ news.title }}"
+        </strong><br/>
+        <span style="font-size:0.8rem; color:var(--text-muted);">This action cannot be undone.</span>
+      </p>
+
+      <form method="POST">
+        {% csrf_token %}
+        <div style="display:flex; gap:10px; flex-wrap:wrap;">
+          <button type="submit" class="btn btn-danger btn-lg">
+            <i class="fa fa-trash"></i> Yes, Delete
+          </button>
+          <a href="{% url 'news_list' %}" class="btn btn-outline btn-lg">
+            <i class="fa fa-arrow-left"></i> Cancel
+          </a>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

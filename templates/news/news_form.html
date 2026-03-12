@@ -1,0 +1,217 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{% if news %}Edit Article{% else %}Submit Article{% endif %} — City &amp; State News{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+  <div>
+    <h1 class="page-title">{% if news %}Edit Article{% else %}Submit New Article{% endif %}</h1>
+    <p class="page-subtitle">
+      {% if news %}Update your article details below.
+      {% else %}Fill in the details and submit for editor review.{% endif %}
+    </p>
+  </div>
+  <a href="{% url 'journalist_dashboard' %}" class="btn btn-outline">
+    <i class="fa fa-arrow-left"></i> Back to Dashboard
+  </a>
+</div>
+
+<div style="display:grid; grid-template-columns:1fr 290px; gap:22px; align-items:start;">
+
+  <div>
+    <form method="POST" enctype="multipart/form-data"
+          action="{% if news %}{% url 'news_edit' news.news_id %}{% else %}{% url 'news_create' %}{% endif %}">
+      {% csrf_token %}
+
+      <div class="card mb-3">
+        <div class="card-header"><span class="card-title">Article Details</span></div>
+        <div class="card-body">
+
+          <div class="form-group">
+            <label class="form-label" for="id_title">Title <span class="req">*</span></label>
+            <input type="text" name="title" id="id_title" class="form-control"
+                   placeholder="Write a clear, descriptive headline…"
+                   value="{{ news.title|default:'' }}" maxlength="200" required/>
+            <span class="form-hint">Max 200 characters.</span>
+          </div>
+
+          <div class="form-row-2">
+            <div class="form-group">
+              <label class="form-label" for="id_category">Category <span class="req">*</span></label>
+              <select name="category" id="id_category" class="form-control" required>
+                <option value="">— Select —</option>
+                {% for cat in categories %}
+                <option value="{{ cat.category_id }}"
+                        {% if news.category.category_id == cat.category_id %}selected{% endif %}>
+                  {{ cat.category_name }}
+                </option>
+                {% endfor %}
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="id_state">State</label>
+              <select name="state" id="id_state" class="form-control"
+                      onchange="loadCities(this.value)">
+                <option value="">— Select —</option>
+                {% for state in states %}
+                <option value="{{ state.state_id }}"
+                        {% if news.city.state.state_id == state.state_id %}selected{% endif %}>
+                  {{ state.state_name }}
+                </option>
+                {% endfor %}
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="id_city">City</label>
+            <select name="city" id="id_city" class="form-control">
+              <option value="">— Select State First —</option>
+              {% if news and news.city %}
+              <option value="{{ news.city.city_id }}" selected>{{ news.city.city_name }}</option>
+              {% endif %}
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="id_description">Content <span class="req">*</span></label>
+            <textarea name="description" id="id_description" class="form-control"
+                      rows="13" placeholder="Write your full article here…"
+                      oninput="updateWordCount(this)" required>{{ news.description|default:'' }}</textarea>
+            <span class="form-hint" id="wordCountHint">0 words</span>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="id_status">Status <span class="req">*</span></label>
+            <select name="status" id="id_status" class="form-control">
+              {% if user.role == 'journalist' %}
+                <option value="draft"   {% if news.status == 'draft'   %}selected{% endif %}>Save as Draft</option>
+                <option value="pending" {% if news.status == 'pending' %}selected{% endif %}>Submit for Review</option>
+              {% else %}
+                <option value="draft"     {% if news.status == 'draft'     %}selected{% endif %}>Draft</option>
+                <option value="pending"   {% if news.status == 'pending'   %}selected{% endif %}>Pending</option>
+                <option value="published" {% if news.status == 'published' %}selected{% endif %}>Published</option>
+                <option value="rejected"  {% if news.status == 'rejected'  %}selected{% endif %}>Rejected</option>
+              {% endif %}
+            </select>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="card mb-3">
+        <div class="card-header"><span class="card-title">Featured Image</span></div>
+        <div class="card-body">
+          {% if news and news.image %}
+          <img src="{{ news.image.url }}" alt="Current"
+               style="max-height:170px; object-fit:cover; border-radius:var(--radius);
+                      border:1px solid var(--border); margin-bottom:12px;"/>
+          <div style="font-size:0.73rem; color:var(--text-muted); margin-bottom:10px;">
+            Current image. Upload a new one to replace it.
+          </div>
+          {% endif %}
+          <input type="file" name="image" class="form-control"
+                 accept="image/*" onchange="previewImg(this)"/>
+          <div id="imgPreview" style="margin-top:10px; display:none;">
+            <img id="previewSrc" style="max-height:180px; object-fit:cover;
+                 border-radius:var(--radius); border:1px solid var(--border);"/>
+          </div>
+          <span class="form-hint">JPG, PNG, WebP — Max 5MB</span>
+        </div>
+      </div>
+
+      <div style="display:flex; gap:11px; flex-wrap:wrap;">
+        <button type="submit" class="btn btn-primary btn-lg">
+          <i class="fa fa-paper-plane"></i>
+          {% if news %}Update Article{% else %}Submit Article{% endif %}
+        </button>
+        <a href="{% url 'journalist_dashboard' %}" class="btn btn-outline btn-lg">
+          <i class="fa fa-times"></i> Cancel
+        </a>
+      </div>
+
+    </form>
+  </div>
+
+  <div>
+    <div class="card mb-3" style="background:var(--bg-light);">
+      <div class="card-header">
+        <span class="card-title"><i class="fa fa-lightbulb" style="color:var(--gold);"></i> Writing Tips</span>
+      </div>
+      <div class="card-body" style="font-size:0.8rem; line-height:1.75; color:var(--text-body);">
+        <div style="margin-bottom:7px;">✏️ <strong>Headlines:</strong> Be specific, avoid clickbait.</div>
+        <div style="margin-bottom:7px;">📸 <strong>Images:</strong> Always include a relevant photo.</div>
+        <div style="margin-bottom:7px;">📍 <strong>Location:</strong> Specify correct city &amp; state.</div>
+        <div style="margin-bottom:7px;">📊 <strong>Length:</strong> Aim for 400–800 words.</div>
+        <div>✅ <strong>Review:</strong> Articles reviewed within 24 hrs.</div>
+      </div>
+    </div>
+
+    {% if news %}
+    <div class="card">
+      <div class="card-header"><span class="card-title">Article Status</span></div>
+      <div class="card-body" style="font-size:0.83rem;">
+        <div style="display:flex; justify-content:space-between; padding:6px 0; border-bottom:1px solid var(--border);">
+          <span style="color:var(--text-muted);">Status</span>
+          {% if news.status == 'published' %}<span class="badge badge-published">Published</span>
+          {% elif news.status == 'pending'  %}<span class="badge badge-pending">Pending</span>
+          {% elif news.status == 'draft'    %}<span class="badge badge-draft">Draft</span>
+          {% else %}<span class="badge badge-rejected">Rejected</span>{% endif %}
+        </div>
+        <div style="display:flex; justify-content:space-between; padding:6px 0; border-bottom:1px solid var(--border);">
+          <span style="color:var(--text-muted);">Published</span>
+          <span>{{ news.publish_date|date:"d M Y"|default:"Not yet" }}</span>
+        </div>
+        <div style="display:flex; justify-content:space-between; padding:6px 0;">
+          <span style="color:var(--text-muted);">Category</span>
+          <span>{{ news.category }}</span>
+        </div>
+      </div>
+    </div>
+    {% endif %}
+  </div>
+
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function updateWordCount(el) {
+  var words = el.value.trim().split(/\s+/).filter(function(w) { return w.length > 0; }).length;
+  document.getElementById('wordCountHint').textContent = words + ' words';
+}
+
+function previewImg(input) {
+  if (input.files && input.files[0]) {
+    var reader = new FileReader();
+    reader.onload = function(e) {
+      document.getElementById('previewSrc').src = e.target.result;
+      document.getElementById('imgPreview').style.display = 'block';
+    };
+    reader.readAsDataURL(input.files[0]);
+  }
+}
+
+function loadCities(stateId) {
+  var sel = document.getElementById('id_city');
+  sel.innerHTML = '<option value="">Loading…</option>';
+  if (!stateId) {
+    sel.innerHTML = '<option value="">— Select State First —</option>';
+    return;
+  }
+  fetch('/dashboard/api/cities/?state_id=' + stateId)
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+      sel.innerHTML = '<option value="">— Select City —</option>';
+      data.cities.forEach(function(c) {
+        sel.innerHTML += '<option value="' + c.city_id + '">' + c.city_name + '</option>';
+      });
+    })
+    .catch(function() {
+      sel.innerHTML = '<option value="">Error loading cities</option>';
+    });
+}
+</script>
+{% endblock %}
