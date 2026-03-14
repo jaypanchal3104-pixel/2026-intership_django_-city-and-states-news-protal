@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import logout
 from .decorators import role_required
-
+from django.http import JsonResponse
 
 # ─────────────────────────────────────────────
 #  ADMIN DASHBOARD
@@ -32,6 +32,8 @@ def advertiserDashboardView(request):
 # ─────────────────────────────────────────────
 def homeView(request):
     return render(request, "core/home.html")
+
+
 
 
 # ─────────────────────────────────────────────
@@ -68,3 +70,14 @@ def dashboardRedirectView(request):
         return redirect("advertiser_dashboard")
     else:
         return redirect("home")
+    
+
+
+
+def citiesApiView(request):
+    state_id = request.GET.get('state_id')
+    if not state_id:
+        return JsonResponse({'cities': []})
+    from core.models import City
+    cities = City.objects.filter(state__state_id=state_id).values('city_id', 'city_name')
+    return JsonResponse({'cities': list(cities)})

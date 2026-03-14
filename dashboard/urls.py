@@ -9,5 +9,5 @@ urlpatterns = [
     path("logout/",     views.logoutView,              name="logout"),
     path("redirect/",   views.dashboardRedirectView,   name="dashboard_redirect"),
     path("unauthorized/", views.unauthorizedView,        name="unauthorized"),
-
+     path("api/cities/",   views.citiesApiView,           name="api_cities"),
 ]

@@ -9,4 +9,5 @@ urlpatterns = [
     path('<int:pk>/delete/',  views.newsDeleteView,  name='news_delete'),
     path('<int:pk>/approve/', views.newsApproveView, name='news_approve'),
     path('<int:pk>/reject/',  views.newsRejectView,  name='news_reject'),
+    path('<int:pk>/comment/', views.addCommentView,  name='add_comment'), 
 ]

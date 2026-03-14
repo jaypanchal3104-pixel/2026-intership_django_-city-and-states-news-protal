@@ -32,47 +32,57 @@
 
       {% if user.role == 'admin' or user.is_superuser %}
         <div class="sidebar-section-label">Dashboard</div>
-        <a href="#" class="{% if request.resolver_match.url_name == 'admin_dashboard' %}active{% endif %}">
+        <a href="{% url 'admin_dashboard' %}" class="{% if request.resolver_match.url_name == 'admin_dashboard' %}active{% endif %}">
           <i class="fa fa-gauge-high"></i> Dashboard
         </a>
         <div class="sidebar-section-label">Content</div>
-        <a href="#"><i class="fa fa-newspaper"></i> All News
-          {% if pending_count %}<span class="nav-badge">{{ pending_count }}</span>{% endif %}
+        <a href="{% url 'news_list' %}"><i class="fa fa-newspaper"></i> All News
+          {% if pending_news %}<span class="nav-badge">{{ pending_news }}</span>{% endif %}
         </a>
-        <a href="#"><i class="fa fa-clock"></i> Pending Approval</a>
-        <a href="#"><i class="fa fa-tags"></i> Categories</a>
+        <a href="{% url 'news_list' %}?status=pending"><i class="fa fa-clock"></i> Pending Approval</a>
+        <a href="{% url 'admin_dashboard' %}"><i class="fa fa-tags"></i> Categories</a>
         <div class="sidebar-section-label">Geography</div>
-        <a href="#"><i class="fa fa-map"></i> States</a>
-        <a href="#"><i class="fa fa-city"></i> Cities</a>
+        <a href="{% url 'admin_dashboard' %}"><i class="fa fa-map"></i> States</a>
+        <a href="{% url 'admin_dashboard' %}"><i class="fa fa-city"></i> Cities</a>
         <div class="sidebar-section-label">Users</div>
-        <a href="#"><i class="fa fa-pen-nib"></i> Journalists</a>
-        <a href="#"><i class="fa fa-users"></i> Readers</a>
-        <a href="#"><i class="fa fa-bullhorn"></i> Advertisers</a>
+        <a href="{% url 'admin_dashboard' %}"><i class="fa fa-pen-nib"></i> Journalists</a>
+        <a href="{% url 'admin_dashboard' %}"><i class="fa fa-users"></i> Readers</a>
+        <a href="{% url 'admin_dashboard' %}"><i class="fa fa-bullhorn"></i> Advertisers</a>
         <div class="sidebar-section-label">System</div>
-        <a href="#"><i class="fa fa-comments"></i> Comments</a>
-        <a href="#"><i class="fa fa-chart-line"></i> Analytics</a>
-        <a href="#"><i class="fa fa-rectangle-ad"></i> Advertisements</a>
+        <a href="{% url 'admin_dashboard' %}"><i class="fa fa-comments"></i> Comments</a>
+        <a href="{% url 'admin_dashboard' %}"><i class="fa fa-chart-line"></i> Analytics</a>
+        <a href="{% url 'admin_dashboard' %}"><i class="fa fa-rectangle-ad"></i> Advertisements</a>
 
       {% elif user.role == 'journalist' %}
         <div class="sidebar-section-label">Dashboard</div>
-        <a href="#" class="{% if request.resolver_match.url_name == 'journalist_dashboard' %}active{% endif %}">
+        <a href="{% url 'journalist_dashboard' %}" class="{% if request.resolver_match.url_name == 'journalist_dashboard' %}active{% endif %}">
           <i class="fa fa-gauge-high"></i> My Dashboard
         </a>
         <div class="sidebar-section-label">Articles</div>
-        <a href="#"><i class="fa fa-plus-circle"></i> Submit Article</a>
-        <a href="#"><i class="fa fa-newspaper"></i> My Articles</a>
-        <a href="#"><i class="fa fa-file-pen"></i> Drafts</a>
+        <a href="{% url 'news_create' %}" class="{% if request.resolver_match.url_name == 'news_create' %}active{% endif %}">
+          <i class="fa fa-plus-circle"></i> Submit Article
+        </a>
+        <a href="{% url 'journalist_dashboard' %}" class="{% if request.resolver_match.url_name == 'journalist_dashboard' %}active{% endif %}">
+          <i class="fa fa-newspaper"></i> My Articles
+        </a>
+        <a href="{% url 'journalist_dashboard' %}?status=draft">
+          <i class="fa fa-file-pen"></i> Drafts
+        </a>
         <div class="sidebar-section-label">Engage</div>
         <a href="#"><i class="fa fa-comments"></i> Comments</a>
         <a href="#"><i class="fa fa-user"></i> My Profile</a>
 
       {% elif user.role == 'user' %}
         <div class="sidebar-section-label">Browse</div>
-        <a href="#"><i class="fa fa-home"></i> Home</a>
-        <a href="#"><i class="fa fa-newspaper"></i> All News</a>
-        <a href="#"><i class="fa fa-tags"></i> By Category</a>
-        <a href="#"><i class="fa fa-city"></i> By City</a>
-        <a href="#"><i class="fa fa-map"></i> By State</a>
+        <a href="{% url 'home' %}" class="{% if request.resolver_match.url_name == 'home' %}active{% endif %}">
+          <i class="fa fa-home"></i> Home
+        </a>
+        <a href="{% url 'news_list' %}" class="{% if request.resolver_match.url_name == 'news_list' %}active{% endif %}">
+          <i class="fa fa-newspaper"></i> All News
+        </a>
+        <a href="{% url 'news_list' %}"><i class="fa fa-tags"></i> By Category</a>
+        <a href="{% url 'news_list' %}"><i class="fa fa-city"></i> By City</a>
+        <a href="{% url 'news_list' %}"><i class="fa fa-map"></i> By State</a>
         <div class="sidebar-section-label">My Account</div>
         <a href="#"><i class="fa fa-bookmark"></i> Bookmarks</a>
         <a href="#"><i class="fa fa-comment"></i> My Comments</a>
@@ -80,12 +90,12 @@
 
       {% elif user.role == 'advertiser' %}
         <div class="sidebar-section-label">Dashboard</div>
-        <a href="#" class="{% if request.resolver_match.url_name == 'advertiser_dashboard' %}active{% endif %}">
+        <a href="{% url 'advertiser_dashboard' %}" class="{% if request.resolver_match.url_name == 'advertiser_dashboard' %}active{% endif %}">
           <i class="fa fa-gauge-high"></i> Dashboard
         </a>
         <div class="sidebar-section-label">Campaigns</div>
         <a href="#"><i class="fa fa-plus-circle"></i> New Campaign</a>
-        <a href="#"><i class="fa fa-rectangle-ad"></i> My Campaigns</a>
+        <a href="{% url 'advertiser_dashboard' %}"><i class="fa fa-rectangle-ad"></i> My Campaigns</a>
         <div class="sidebar-section-label">Finance</div>
         <a href="#"><i class="fa fa-chart-bar"></i> Analytics</a>
         <a href="#"><i class="fa fa-credit-card"></i> Payments</a>
@@ -103,7 +113,7 @@
         <button class="sidebar-toggle" onclick="toggleSidebar()" aria-label="Menu">
           <i class="fa fa-bars"></i>
         </button>
-        <form action="#" method="GET" class="navbar-search" role="search">
+        <form action="{% url 'news_list' %}" method="GET" class="navbar-search" role="search">
           <i class="fa fa-search"></i>
           <input type="text" name="q" placeholder="Search news, cities, categories…"
                  value="{{ request.GET.q }}" autocomplete="off"/>
@@ -176,17 +186,17 @@
 {% endif %}
 
 <nav class="public-navbar">
-  <a href="#" class="pub-logo">
+  <a href="{% url 'home' %}" class="pub-logo">
     <span class="logo-badge">C&amp;S</span>
     City<span class="logo-accent">&amp;</span>State
     <span style="font-weight:300; font-size:0.95rem; margin-left:4px;">News</span>
   </a>
   <div class="pub-nav-links">
-    <a href="#" class="{% if request.resolver_match.url_name == 'home' %}active{% endif %}">Home</a>
-    <a href="#">News</a>
-    <a href="#">States</a>
-    <a href="#">Cities</a>
-    <a href="#">Categories</a>
+    <a href="{% url 'home' %}" class="{% if request.resolver_match.url_name == 'home' %}active{% endif %}">Home</a>
+    <a href="{% url 'news_list' %}" class="{% if request.resolver_match.url_name == 'news_list' %}active{% endif %}">News</a>
+    <a href="{% url 'news_list' %}?state=">States</a>
+    <a href="{% url 'news_list' %}?city=">Cities</a>
+    <a href="{% url 'news_list' %}?category=">Categories</a>
   </div>
   <div class="pub-nav-actions">
     <a href="{% url 'login' %}" class="btn btn-ghost-white">Login</a>
@@ -214,8 +224,8 @@
     <div>
       <div style="font-weight:800; color:#fff; margin-bottom:9px; font-size:0.7rem; text-transform:uppercase; letter-spacing:0.08em;">Quick Links</div>
       <div style="display:flex; flex-direction:column; gap:6px; font-size:0.8rem;">
-        <a href="#">Home</a>
-        <a href="#">Latest News</a>
+        <a href="{% url 'home' %}">Home</a>
+        <a href="{% url 'news_list' %}">Latest News</a>
         <a href="#">About Us</a>
         <a href="#">Contact</a>
       </div>

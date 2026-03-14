@@ -43,7 +43,6 @@
         {{ news.title }}
       </h1>
 
-      {# Journalist info #}
       {% if news.journalist %}
       <div style="font-size:0.78rem; color:var(--text-muted); margin-bottom:14px;">
         <i class="fa fa-user-pen"></i>
@@ -131,7 +130,7 @@
     </div>
     {% endif %}
 
-    {# ── Comments ── #}
+    {# Comments #}
     <section>
       <h3 style="font-family:'Playfair Display',serif; margin-bottom:18px;">
         Comments
@@ -143,7 +142,7 @@
       {% if user.is_authenticated %}
       <div class="card mb-3">
         <div style="padding:18px;">
-          <form action="#" method="POST">
+          <form action="{% url 'add_comment' news.news_id %}" method="POST">
             {% csrf_token %}
             <div class="form-group">
               <label class="form-label">Leave a Comment</label>
@@ -196,7 +195,7 @@
     </section>
   </article>
 
-  {# ── Right Sidebar ── #}
+  {# Right Sidebar #}
   <aside>
     <div class="card mb-3">
       <div class="card-header"><span class="card-title">Related News</span></div>
@@ -232,7 +231,6 @@
       </div>
     </div>
 
-    {# Back to news list #}
     <a href="{% url 'news_list' %}" class="btn btn-outline" style="width:100%; justify-content:center;">
       <i class="fa fa-arrow-left"></i> All News
     </a>

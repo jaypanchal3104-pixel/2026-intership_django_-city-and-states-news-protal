@@ -29,6 +29,7 @@
         <div class="card-header"><span class="card-title">Article Details</span></div>
         <div class="card-body">
 
+          {# Title #}
           <div class="form-group">
             <label class="form-label" for="id_title">Title <span class="req">*</span></label>
             <input type="text" name="title" id="id_title" class="form-control"
@@ -37,44 +38,49 @@
             <span class="form-hint">Max 200 characters.</span>
           </div>
 
-          <div class="form-row-2">
-            <div class="form-group">
-              <label class="form-label" for="id_category">Category <span class="req">*</span></label>
-              <select name="category" id="id_category" class="form-control" required>
-                <option value="">— Select —</option>
-                {% for cat in categories %}
-                <option value="{{ cat.category_id }}"
-                        {% if news.category.category_id == cat.category_id %}selected{% endif %}>
-                  {{ cat.category_name }}
-                </option>
-                {% endfor %}
-              </select>
-            </div>
-            <div class="form-group">
-              <label class="form-label" for="id_state">State</label>
-              <select name="state" id="id_state" class="form-control"
-                      onchange="loadCities(this.value)">
-                <option value="">— Select —</option>
-                {% for state in states %}
-                <option value="{{ state.state_id }}"
-                        {% if news.city.state.state_id == state.state_id %}selected{% endif %}>
-                  {{ state.state_name }}
-                </option>
-                {% endfor %}
-              </select>
-            </div>
-          </div>
-
+          {# Category #}
           <div class="form-group">
-            <label class="form-label" for="id_city">City</label>
-            <select name="city" id="id_city" class="form-control">
-              <option value="">— Select State First —</option>
-              {% if news and news.city %}
-              <option value="{{ news.city.city_id }}" selected>{{ news.city.city_name }}</option>
-              {% endif %}
+            <label class="form-label" for="id_category">Category <span class="req">*</span></label>
+            <select name="category" id="id_category" class="form-control" required>
+              <option value="">— Select Category —</option>
+              {% for cat in categories %}
+              <option value="{{ cat.category_id }}"
+                      {% if news.category.category_id == cat.category_id %}selected{% endif %}>
+                {{ cat.category_name }}
+              </option>
+              {% endfor %}
             </select>
           </div>
 
+          {# State #}
+          <div class="form-group">
+            <label class="form-label" for="id_state">State</label>
+            <select name="state" id="id_state" class="form-control">
+              <option value="">— Select State —</option>
+              {% for state in states %}
+              <option value="{{ state.state_id }}"
+                      {% if news.city.state.state_id == state.state_id %}selected{% endif %}>
+                {{ state.state_name }}
+              </option>
+              {% endfor %}
+            </select>
+          </div>
+
+          {# City #}
+          <div class="form-group">
+            <label class="form-label" for="id_city">City</label>
+            <select name="city" id="id_city" class="form-control">
+              <option value="">— Select City —</option>
+              {% for city in cities %}
+              <option value="{{ city.city_id }}"
+                      {% if news.city.city_id == city.city_id %}selected{% endif %}>
+                {{ city.city_name }}
+              </option>
+              {% endfor %}
+            </select>
+          </div>
+
+          {# Description #}
           <div class="form-group">
             <label class="form-label" for="id_description">Content <span class="req">*</span></label>
             <textarea name="description" id="id_description" class="form-control"
@@ -83,6 +89,7 @@
             <span class="form-hint" id="wordCountHint">0 words</span>
           </div>
 
+          {# Status #}
           <div class="form-group">
             <label class="form-label" for="id_status">Status <span class="req">*</span></label>
             <select name="status" id="id_status" class="form-control">
@@ -101,6 +108,7 @@
         </div>
       </div>
 
+      {# Image #}
       <div class="card mb-3">
         <div class="card-header"><span class="card-title">Featured Image</span></div>
         <div class="card-body">
@@ -122,6 +130,7 @@
         </div>
       </div>
 
+      {# Buttons #}
       <div style="display:flex; gap:11px; flex-wrap:wrap;">
         <button type="submit" class="btn btn-primary btn-lg">
           <i class="fa fa-paper-plane"></i>
@@ -135,6 +144,7 @@
     </form>
   </div>
 
+  {# Sidebar #}
   <div>
     <div class="card mb-3" style="background:var(--bg-light);">
       <div class="card-header">
@@ -174,6 +184,7 @@
   </div>
 
 </div>
+
 {% endblock %}
 
 {% block extra_js %}
@@ -192,26 +203,6 @@ function previewImg(input) {
     };
     reader.readAsDataURL(input.files[0]);
   }
-}
-
-function loadCities(stateId) {
-  var sel = document.getElementById('id_city');
-  sel.innerHTML = '<option value="">Loading…</option>';
-  if (!stateId) {
-    sel.innerHTML = '<option value="">— Select State First —</option>';
-    return;
-  }
-  fetch('/dashboard/api/cities/?state_id=' + stateId)
-    .then(function(r) { return r.json(); })
-    .then(function(data) {
-      sel.innerHTML = '<option value="">— Select City —</option>';
-      data.cities.forEach(function(c) {
-        sel.innerHTML += '<option value="' + c.city_id + '">' + c.city_name + '</option>';
-      });
-    })
-    .catch(function() {
-      sel.innerHTML = '<option value="">Error loading cities</option>';
-    });
 }
 </script>
 {% endblock %}

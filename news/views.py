@@ -1,9 +1,9 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth.decorators import login_required
 from django.utils import timezone
-from core.models import News, Category, State, City
+from core.models import News, Category, State, City,Comment
 from .forms import NewsForm
 from dashboard.decorators import role_required
+from django.contrib.auth.decorators import login_required
 
 
 # ─────────────────────────────────────────────
@@ -11,21 +11,18 @@ from dashboard.decorators import role_required
 #  URL: /news/
 # ─────────────────────────────────────────────
 def newsListView(request):
-    news_list  = News.objects.filter(status='published').order_by('-publish_date')
+    news_list  = News.objects.filter(status='published').order_by('-publish_date', '-created_at')
     categories = Category.objects.all()
     states     = State.objects.all()
 
-    # Filter by category
-    category_slug = request.GET.get('category')
-    if category_slug:
-        news_list = news_list.filter(category__slug=category_slug)
+    category_id = request.GET.get('category')
+    if category_id:
+        news_list = news_list.filter(category__category_id=category_id)
 
-    # Filter by state
-    state_slug = request.GET.get('state')
-    if state_slug:
-        news_list = news_list.filter(state__slug=state_slug)
+    state_id = request.GET.get('state')
+    if state_id:
+        news_list = news_list.filter(city__state__state_id=state_id)
 
-    # Search
     query = request.GET.get('q')
     if query:
         news_list = news_list.filter(title__icontains=query)
@@ -40,28 +37,35 @@ def newsListView(request):
 
 # ─────────────────────────────────────────────
 #  PUBLIC — NEWS DETAIL
-#  URL: /news/<id>/
+#  URL: /news/<pk>/
 # ─────────────────────────────────────────────
 def newsDetailView(request, pk):
-    news = get_object_or_404(News, pk=pk, status='published')
+    # Admin/journalist → badha status dekhai
+    # Public → ফক্ত published
+    if request.user.is_authenticated and request.user.role in ['admin', 'journalist']:
+        news = get_object_or_404(News, news_id=pk)
+    else:
+        news = get_object_or_404(News, news_id=pk, status='published')
 
-    # View count
     news.views += 1
     news.save(update_fields=['views'])
 
     related_news = News.objects.filter(
         category=news.category,
         status='published'
-    ).exclude(pk=pk)[:4]
+    ).exclude(news_id=pk)[:4]
+
+    comments = news.comments.filter(is_active=True)
 
     return render(request, 'news/news_detail.html', {
         'news':         news,
         'related_news': related_news,
+        'comments':     comments,
     })
 
 
 # ─────────────────────────────────────────────
-#  JOURNALIST — CREATE NEWS
+#  JOURNALIST / ADMIN — CREATE NEWS
 #  URL: /news/create/
 # ─────────────────────────────────────────────
 @role_required(allowed_roles=['journalist', 'admin'])
@@ -69,31 +73,37 @@ def newsCreateView(request):
     if request.method == 'POST':
         form = NewsForm(request.POST, request.FILES, user=request.user)
         if form.is_valid():
-            news        = form.save(commit=False)
-            news.author = request.user
+            news            = form.save(commit=False)
+            news.journalist = request.user
             if news.status == 'published':
-                news.publish_date = timezone.now()
+                news.publish_date = timezone.now().date()
             news.save()
-            return redirect('news_detail', pk=news.pk)
+            return redirect('news_detail', pk=news.news_id)
     else:
         form = NewsForm(user=request.user)
 
+    categories = Category.objects.all()
+    states     = State.objects.all()
+    cities     = City.objects.all()
+
     return render(request, 'news/news_form.html', {
-        'form':  form,
-        'title': 'Submit New Article',
+        'form':       form,
+        'title':      'Submit New Article',
+        'categories': categories,
+        'states':     states,
+        'cities':     cities,
     })
 
 
 # ─────────────────────────────────────────────
 #  JOURNALIST / ADMIN — EDIT NEWS
-#  URL: /news/<id>/edit/
+#  URL: /news/<pk>/edit/
 # ─────────────────────────────────────────────
 @role_required(allowed_roles=['journalist', 'admin'])
 def newsEditView(request, pk):
-    news = get_object_or_404(News, pk=pk)
+    news = get_object_or_404(News, news_id=pk)
 
-    # Journalist fakt potani j news edit kari shake
-    if request.user.role == 'journalist' and news.author != request.user:
+    if request.user.role == 'journalist' and news.journalist != request.user:
         return redirect('unauthorized')
 
     if request.method == 'POST':
@@ -101,29 +111,35 @@ def newsEditView(request, pk):
         if form.is_valid():
             news = form.save(commit=False)
             if news.status == 'published' and not news.publish_date:
-                news.publish_date = timezone.now()
+                news.publish_date = timezone.now().date()
             news.save()
-            return redirect('news_detail', pk=news.pk)
+            return redirect('news_detail', pk=news.news_id)
     else:
         form = NewsForm(instance=news, user=request.user)
 
+    categories = Category.objects.all()
+    states     = State.objects.all()
+    cities     = City.objects.all()
+
     return render(request, 'news/news_form.html', {
-        'form':  form,
-        'news':  news,
-        'title': 'Edit Article',
+        'form':       form,
+        'news':       news,
+        'title':      'Edit Article',
+        'categories': categories,
+        'states':     states,
+        'cities':     cities,
     })
 
 
 # ─────────────────────────────────────────────
 #  JOURNALIST / ADMIN — DELETE NEWS
-#  URL: /news/<id>/delete/
+#  URL: /news/<pk>/delete/
 # ─────────────────────────────────────────────
 @role_required(allowed_roles=['journalist', 'admin'])
 def newsDeleteView(request, pk):
-    news = get_object_or_404(News, pk=pk)
+    news = get_object_or_404(News, news_id=pk)
 
-    # Journalist fakt potani j news delete kari shake
-    if request.user.role == 'journalist' and news.author != request.user:
+    if request.user.role == 'journalist' and news.journalist != request.user:
         return redirect('unauthorized')
 
     if request.method == 'POST':
@@ -135,24 +151,39 @@ def newsDeleteView(request, pk):
 
 # ─────────────────────────────────────────────
 #  ADMIN — APPROVE NEWS
-#  URL: /news/<id>/approve/
+#  URL: /news/<pk>/approve/
 # ─────────────────────────────────────────────
 @role_required(allowed_roles=['admin'])
 def newsApproveView(request, pk):
-    news              = get_object_or_404(News, pk=pk)
+    news              = get_object_or_404(News, news_id=pk)
     news.status       = 'published'
-    news.publish_date = timezone.now()
+    news.publish_date = timezone.now().date()
     news.save()
     return redirect('admin_dashboard')
 
 
 # ─────────────────────────────────────────────
 #  ADMIN — REJECT NEWS
-#  URL: /news/<id>/reject/
+#  URL: /news/<pk>/reject/
 # ─────────────────────────────────────────────
 @role_required(allowed_roles=['admin'])
 def newsRejectView(request, pk):
-    news        = get_object_or_404(News, pk=pk)
+    news        = get_object_or_404(News, news_id=pk)
     news.status = 'rejected'
     news.save()
     return redirect('admin_dashboard')
+
+
+
+@login_required
+def addCommentView(request, pk):
+    news = get_object_or_404(News, news_id=pk)
+    if request.method == 'POST':
+        content = request.POST.get('content', '').strip()
+        if content:
+            Comment.objects.create(
+                news=news,
+                user=request.user,
+                content=content,
+            )
+    return redirect('news_detail', pk=pk)
