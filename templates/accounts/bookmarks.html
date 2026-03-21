@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}My Bookmarks — City &amp; State News{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+  <div>
+    <h1 class="page-title">My Bookmarks</h1>
+    <p class="page-subtitle">Articles you have saved for later</p>
+  </div>
+  <span style="background:#e0f2fe; color:#0369a1; padding:6px 14px;
+               border-radius:20px; font-size:0.78rem; font-weight:800;">
+    {{ bookmarks.count }} Saved
+  </span>
+</div>
+
+{% if bookmarks %}
+<div class="news-grid">
+  {% for bookmark in bookmarks %}
+  <div class="news-card">
+    <a href="{% url 'news_detail' bookmark.news.news_id %}">
+      {% if bookmark.news.image %}
+      <img src="{{ bookmark.news.image.url }}" alt="{{ bookmark.news.title }}"
+           class="news-card-img" loading="lazy"/>
+      {% else %}
+      <div class="news-card-img-placeholder">
+        <i class="fa fa-newspaper"></i>
+      </div>
+      {% endif %}
+    </a>
+    <div class="news-card-body">
+      <div class="news-card-meta">
+        <span class="cat-tag">{{ bookmark.news.category }}</span>
+        <span class="news-date">{{ bookmark.news.publish_date|date:"d M" }}</span>
+      </div>
+      <h3 class="news-card-title">
+        <a href="{% url 'news_detail' bookmark.news.news_id %}">{{ bookmark.news.title }}</a>
+      </h3>
+      <p class="news-card-excerpt">{{ bookmark.news.description|striptags|truncatewords:16 }}</p>
+    </div>
+    <div class="news-card-footer">
+      <span class="news-location">
+        <i class="fa fa-location-dot"></i> {{ bookmark.news.city }}
+      </span>
+      <div style="display:flex; gap:6px;">
+        <a href="{% url 'news_detail' bookmark.news.news_id %}" class="btn btn-sm btn-outline">
+          Read →
+        </a>
+        <a href="{% url 'bookmark_toggle' bookmark.news.news_id %}"
+           class="btn btn-sm"
+           style="background:#fee2e2; color:#dc2626; border:none;"
+           title="Remove bookmark">
+          <i class="fa fa-bookmark-slash"></i>
+        </a>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+
+{% else %}
+<div style="text-align:center; padding:60px 20px; color:var(--text-muted);">
+  <i class="fa fa-bookmark" style="font-size:3rem; margin-bottom:16px; display:block; opacity:0.2;"></i>
+  <h3 style="margin-bottom:8px;">No bookmarks yet</h3>
+  <p style="font-size:0.87rem; margin-bottom:20px;">Save articles to read them later!</p>
+  <a href="{% url 'news_list' %}" class="btn btn-primary">
+    <i class="fa fa-newspaper"></i> Browse News
+  </a>
+</div>
+{% endif %}
+
+{% endblock %}

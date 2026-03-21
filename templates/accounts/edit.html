@@ -1,0 +1,102 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Edit Profile — City &amp; State News{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+  <div>
+    <h1 class="page-title">Edit Profile</h1>
+    <p class="page-subtitle">Update your personal information</p>
+  </div>
+  <a href="{% url 'profile' %}" class="btn btn-outline">
+    <i class="fa fa-arrow-left"></i> Back to Profile
+  </a>
+</div>
+
+<div style="max-width:600px;">
+  <div class="card">
+    <div class="card-header"><span class="card-title">Personal Information</span></div>
+    <div class="card-body">
+      <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        {# Profile photo preview #}
+        <div style="text-align:center; margin-bottom:22px;">
+          {% if user.profile_photo %}
+          <img src="{{ user.profile_photo.url }}" id="photoPreview"
+               style="width:80px; height:80px; border-radius:50%; object-fit:cover;
+                      border:3px solid var(--accent); margin-bottom:10px;"/>
+          {% else %}
+          <div id="photoPlaceholder"
+               style="width:80px; height:80px; border-radius:50%; background:var(--primary);
+                      display:flex; align-items:center; justify-content:center;
+                      font-size:1.8rem; font-weight:700; color:#fff;
+                      margin:0 auto 10px; border:3px solid var(--accent);">
+            {{ user.firstname|default:user.email|first|upper }}
+          </div>
+          {% endif %}
+          <div>
+            <label class="form-label">Profile Photo</label>
+            <input type="file" name="profile_photo" class="form-control"
+                   accept="image/*" onchange="previewPhoto(this)"/>
+            <span class="form-hint">JPG, PNG — Max 2MB</span>
+          </div>
+        </div>
+
+        <div class="form-row-2">
+          <div class="form-group">
+            <label class="form-label">First Name <span class="req">*</span></label>
+            {{ form.firstname }}
+            {% if form.firstname.errors %}
+            <span class="form-error">{{ form.firstname.errors.0 }}</span>
+            {% endif %}
+          </div>
+          <div class="form-group">
+            <label class="form-label">Last Name</label>
+            {{ form.lastname }}
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Email Address <span class="req">*</span></label>
+          {{ form.email }}
+          {% if form.email.errors %}
+          <span class="form-error">{{ form.email.errors.0 }}</span>
+          {% endif %}
+        </div>
+
+        <div style="display:flex; gap:10px; margin-top:8px;">
+          <button type="submit" class="btn btn-primary btn-lg">
+            <i class="fa fa-floppy-disk"></i> Save Changes
+          </button>
+          <a href="{% url 'profile' %}" class="btn btn-outline btn-lg">Cancel</a>
+        </div>
+
+      </form>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function previewPhoto(input) {
+  if (input.files && input.files[0]) {
+    var reader = new FileReader();
+    reader.onload = function(e) {
+      var preview = document.getElementById('photoPreview');
+      var placeholder = document.getElementById('photoPlaceholder');
+      if (preview) {
+        preview.src = e.target.result;
+      } else if (placeholder) {
+        placeholder.innerHTML = '<img src="' + e.target.result + '" style="width:100%;height:100%;border-radius:50%;object-fit:cover;"/>';
+      }
+    };
+    reader.readAsDataURL(input.files[0]);
+  }
+}
+</script>
+{% endblock %}
