@@ -36,37 +36,63 @@
            class="{% if request.resolver_match.url_name == 'admin_dashboard' %}active{% endif %}">
           <i class="fa fa-gauge-high"></i> Dashboard
         </a>
+
         <div class="sidebar-section-label">Content</div>
         <a href="{% url 'news_list' %}"
            class="{% if request.resolver_match.url_name == 'news_list' %}active{% endif %}">
           <i class="fa fa-newspaper"></i> All News
           {% if pending_news %}<span class="nav-badge">{{ pending_news }}</span>{% endif %}
         </a>
-        <a href="{% url 'admin_dashboard' %}">
+        <a href="{% url 'admin_pending' %}"
+           class="{% if request.resolver_match.url_name == 'admin_pending' %}active{% endif %}">
           <i class="fa fa-clock"></i> Pending Approval
         </a>
         <a href="{% url 'news_create' %}"
            class="{% if request.resolver_match.url_name == 'news_create' %}active{% endif %}">
           <i class="fa fa-plus-circle"></i> New Article
         </a>
-        <a href="{% url 'admin_dashboard' %}">
+        <a href="{% url 'admin_categories' %}"
+           class="{% if request.resolver_match.url_name == 'admin_categories' %}active{% endif %}">
           <i class="fa fa-tags"></i> Categories
         </a>
+
         <div class="sidebar-section-label">Geography</div>
-        <a href="{% url 'admin_dashboard' %}">
+        <a href="{% url 'admin_states' %}"
+           class="{% if request.resolver_match.url_name == 'admin_states' %}active{% endif %}">
           <i class="fa fa-map"></i> States
         </a>
-        <a href="{% url 'admin_dashboard' %}">
+        <a href="{% url 'admin_cities' %}"
+           class="{% if request.resolver_match.url_name == 'admin_cities' %}active{% endif %}">
           <i class="fa fa-city"></i> Cities
         </a>
+
         <div class="sidebar-section-label">Users</div>
-        <a href="{% url 'admin_dashboard' %}"><i class="fa fa-pen-nib"></i> Journalists</a>
-        <a href="{% url 'admin_dashboard' %}"><i class="fa fa-users"></i> Readers</a>
-        <a href="{% url 'admin_dashboard' %}"><i class="fa fa-bullhorn"></i> Advertisers</a>
+        <a href="{% url 'admin_journalists' %}"
+           class="{% if request.resolver_match.url_name == 'admin_journalists' %}active{% endif %}">
+          <i class="fa fa-pen-nib"></i> Journalists
+        </a>
+        <a href="{% url 'admin_readers' %}"
+           class="{% if request.resolver_match.url_name == 'admin_readers' %}active{% endif %}">
+          <i class="fa fa-users"></i> Readers
+        </a>
+        <a href="{% url 'admin_advertisers' %}"
+           class="{% if request.resolver_match.url_name == 'admin_advertisers' %}active{% endif %}">
+          <i class="fa fa-bullhorn"></i> Advertisers
+        </a>
+
         <div class="sidebar-section-label">System</div>
-        <a href="{% url 'admin_dashboard' %}"><i class="fa fa-comments"></i> Comments</a>
-        <a href="{% url 'admin_dashboard' %}"><i class="fa fa-chart-line"></i> Analytics</a>
-        <a href="{% url 'admin_dashboard' %}"><i class="fa fa-rectangle-ad"></i> Advertisements</a>
+        <a href="{% url 'admin_comments' %}"
+           class="{% if request.resolver_match.url_name == 'admin_comments' %}active{% endif %}">
+          <i class="fa fa-comments"></i> Comments
+        </a>
+        <a href="{% url 'admin_analytics' %}"
+           class="{% if request.resolver_match.url_name == 'admin_analytics' %}active{% endif %}">
+          <i class="fa fa-chart-line"></i> Analytics
+        </a>
+        <a href="{% url 'admin_advertisements' %}"
+           class="{% if request.resolver_match.url_name == 'admin_advertisements' %}active{% endif %}">
+          <i class="fa fa-rectangle-ad"></i> Advertisements
+        </a>
 
       {% elif user.role == 'journalist' %}
         <div class="sidebar-section-label">Dashboard</div>

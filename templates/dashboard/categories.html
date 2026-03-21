@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Categories — City &amp; State News{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+  <div>
+    <h1 class="page-title">Categories</h1>
+    <p class="page-subtitle">Manage news categories</p>
+  </div>
+</div>
+
+{# Add Category Form #}
+<div class="card mb-3">
+  <div class="card-header"><span class="card-title">Add New Category</span></div>
+  <div class="card-body">
+    <form method="POST" style="display:flex; gap:10px; flex-wrap:wrap;">
+      {% csrf_token %}
+      <input type="text" name="category_name" class="form-control"
+             placeholder="Category name..." style="max-width:300px;" required/>
+      <button type="submit" class="btn btn-primary">
+        <i class="fa fa-plus"></i> Add Category
+      </button>
+    </form>
+  </div>
+</div>
+
+{# Categories Table #}
+<div class="card">
+  <div class="card-header">
+    <span class="card-title">All Categories</span>
+    <span style="font-size:0.75rem; color:var(--text-muted);">{{ categories.count }} total</span>
+  </div>
+  <div class="table-responsive">
+    <table class="table">
+      <thead>
+        <tr><th>#</th><th>Category Name</th><th>Articles</th><th>Actions</th></tr>
+      </thead>
+      <tbody>
+        {% for cat in categories %}
+        <tr>
+          <td style="font-family:'JetBrains Mono',monospace; font-size:0.72rem; color:var(--text-muted);">
+            {{ cat.category_id }}
+          </td>
+          <td style="font-weight:600; font-size:0.85rem;">{{ cat.category_name }}</td>
+          <td style="font-size:0.8rem;">{{ cat.news_count|default:0 }}</td>
+          <td>
+            <form method="POST" action="{% url 'admin_category_delete' cat.category_id %}"
+                  style="display:inline;"
+                  onsubmit="return confirm('Delete {{ cat.category_name }}?')">
+              {% csrf_token %}
+              <button type="submit" class="btn btn-icon delete" title="Delete">
+                <i class="fa fa-trash"></i>
+              </button>
+            </form>
+          </td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="4" style="text-align:center; color:var(--text-muted); padding:28px;">
+            No categories yet.
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+{% endblock %}

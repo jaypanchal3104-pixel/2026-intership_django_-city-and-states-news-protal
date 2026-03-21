@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}States — City &amp; State News{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+  <div>
+    <h1 class="page-title">States</h1>
+    <p class="page-subtitle">Manage states</p>
+  </div>
+</div>
+
+{# Add State Form #}
+<div class="card mb-3">
+  <div class="card-header"><span class="card-title">Add New State</span></div>
+  <div class="card-body">
+    <form method="POST" style="display:flex; gap:10px; flex-wrap:wrap;">
+      {% csrf_token %}
+      <input type="text" name="state_name" class="form-control"
+             placeholder="State name..." style="max-width:300px;" required/>
+      <button type="submit" class="btn btn-primary">
+        <i class="fa fa-plus"></i> Add State
+      </button>
+    </form>
+  </div>
+</div>
+
+{# States Table #}
+<div class="card">
+  <div class="card-header">
+    <span class="card-title">All States</span>
+    <span style="font-size:0.75rem; color:var(--text-muted);">{{ states.count }} total</span>
+  </div>
+  <div class="table-responsive">
+    <table class="table">
+      <thead>
+        <tr><th>#</th><th>State Name</th><th>Cities</th><th>News</th><th>Actions</th></tr>
+      </thead>
+      <tbody>
+        {% for state in states %}
+        <tr>
+          <td style="font-family:'JetBrains Mono',monospace; font-size:0.72rem; color:var(--text-muted);">
+            {{ state.state_id }}
+          </td>
+          <td style="font-weight:600; font-size:0.85rem;">{{ state.state_name }}</td>
+          <td style="font-size:0.8rem;">{{ state.city_count|default:0 }}</td>
+          <td style="font-size:0.8rem;">{{ state.news_count|default:0 }}</td>
+          <td>
+            <form method="POST" action="{% url 'admin_state_delete' state.state_id %}"
+                  style="display:inline;"
+                  onsubmit="return confirm('Delete {{ state.state_name }}? All cities will also be deleted!')">
+              {% csrf_token %}
+              <button type="submit" class="btn btn-icon delete" title="Delete">
+                <i class="fa fa-trash"></i>
+              </button>
+            </form>
+          </td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="5" style="text-align:center; color:var(--text-muted); padding:28px;">
+            No states yet.
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+{% endblock %}

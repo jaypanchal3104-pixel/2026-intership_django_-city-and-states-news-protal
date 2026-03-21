@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Advertisements — City &amp; State News{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+  <div>
+    <h1 class="page-title">Advertisements</h1>
+    <p class="page-subtitle">Manage all ad campaigns</p>
+  </div>
+  <span style="background:#f3e8ff; color:#7c3aed; padding:6px 14px; border-radius:20px; font-size:0.78rem; font-weight:800;">
+    {{ ads.count }} Campaigns
+  </span>
+</div>
+
+<div class="card">
+  <div class="table-responsive">
+    <table class="table">
+      <thead>
+        <tr><th>Campaign</th><th>Advertiser</th><th>Placement</th><th>Status</th><th>Impressions</th><th>Clicks</th><th>Budget (₹)</th></tr>
+      </thead>
+      <tbody>
+        {% for ad in ads %}
+        <tr>
+          <td style="font-weight:600; font-size:0.85rem;">{{ ad.name }}</td>
+          <td style="font-size:0.8rem;">{{ ad.advertiser.firstname|default:ad.advertiser.email }}</td>
+          <td style="font-size:0.78rem;">{{ ad.get_placement_display }}</td>
+          <td>
+            {% if ad.status == 'active' %}<span class="badge badge-published">Active</span>
+            {% elif ad.status == 'pending' %}<span class="badge badge-pending">Pending</span>
+            {% elif ad.status == 'inactive' %}<span class="badge badge-draft">Inactive</span>
+            {% else %}<span class="badge badge-rejected">Rejected</span>{% endif %}
+          </td>
+          <td style="font-family:'JetBrains Mono',monospace; font-size:0.8rem;">{{ ad.impressions|default:0 }}</td>
+          <td style="font-family:'JetBrains Mono',monospace; font-size:0.8rem;">{{ ad.clicks|default:0 }}</td>
+          <td style="font-family:'JetBrains Mono',monospace; font-size:0.8rem;">{{ ad.budget }}</td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="7" style="text-align:center; color:var(--text-muted); padding:44px;">
+            <i class="fa fa-rectangle-ad" style="font-size:2.5rem; display:block; margin-bottom:12px; opacity:0.2;"></i>
+            No advertisements yet.
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+{% endblock %}

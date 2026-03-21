@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Pending Approval — City &amp; State News{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+  <div>
+    <h1 class="page-title">Pending Approval</h1>
+    <p class="page-subtitle">Articles waiting for your review</p>
+  </div>
+  <span style="background:#fef9c3; color:#854d0e; padding:6px 14px; border-radius:20px; font-size:0.78rem; font-weight:800;">
+    {{ pending_list.count }} Pending
+  </span>
+</div>
+
+<div class="card">
+  <div class="table-responsive">
+    <table class="table">
+      <thead>
+        <tr><th>Title</th><th>Journalist</th><th>Category</th><th>City</th><th>Submitted</th><th>Actions</th></tr>
+      </thead>
+      <tbody>
+        {% for news in pending_list %}
+        <tr>
+          <td style="max-width:220px;">
+            <div style="font-weight:600; font-family:'Playfair Display',serif; font-size:0.85rem;
+                        white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
+              {{ news.title }}
+            </div>
+          </td>
+          <td style="font-size:0.8rem;">{{ news.journalist.firstname|default:news.journalist.email }}</td>
+          <td><span class="cat-tag" style="font-size:0.57rem;">{{ news.category }}</span></td>
+          <td style="font-size:0.8rem;">{{ news.city }}</td>
+          <td style="font-size:0.72rem; color:var(--text-muted); font-family:'JetBrains Mono',monospace;">
+            {{ news.created_at|date:"d M Y" }}
+          </td>
+          <td>
+            <div style="display:flex; gap:4px;">
+              <a href="{% url 'news_detail' news.news_id %}" class="btn btn-icon" title="View">
+                <i class="fa fa-eye"></i>
+              </a>
+              <a href="{% url 'news_approve' news.news_id %}" class="btn btn-icon" title="Approve"
+                 style="color:#16a34a; border-color:#16a34a;">
+                <i class="fa fa-check"></i>
+              </a>
+              <a href="{% url 'news_reject' news.news_id %}" class="btn btn-icon delete" title="Reject">
+                <i class="fa fa-times"></i>
+              </a>
+            </div>
+          </td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="6" style="text-align:center; padding:44px; color:var(--text-muted);">
+            <i class="fa fa-circle-check" style="font-size:2.5rem; color:#16a34a; display:block; margin-bottom:12px; opacity:0.5;"></i>
+            <p>All caught up! No pending articles.</p>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+{% endblock %}

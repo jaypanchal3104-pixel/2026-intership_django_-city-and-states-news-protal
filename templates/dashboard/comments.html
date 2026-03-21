@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Comments — City &amp; State News{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+  <div>
+    <h1 class="page-title">Comments</h1>
+    <p class="page-subtitle">Manage all user comments</p>
+  </div>
+  <span style="background:#f1f5f9; color:#475569; padding:6px 14px; border-radius:20px; font-size:0.78rem; font-weight:800;">
+    {{ comments.count }} Comments
+  </span>
+</div>
+
+<div class="card">
+  <div class="table-responsive">
+    <table class="table">
+      <thead>
+        <tr><th>User</th><th>Comment</th><th>Article</th><th>Date</th><th>Actions</th></tr>
+      </thead>
+      <tbody>
+        {% for comment in comments %}
+        <tr>
+          <td>
+            <div style="display:flex; align-items:center; gap:8px;">
+              <div style="width:28px; height:28px; border-radius:50%; background:var(--primary);
+                          display:flex; align-items:center; justify-content:center;
+                          color:#fff; font-size:0.65rem; font-weight:700; flex-shrink:0;">
+                {{ comment.user.firstname|default:comment.user.email|first|upper }}
+              </div>
+              <span style="font-size:0.82rem; font-weight:600;">
+                {{ comment.user.firstname|default:comment.user.email }}
+              </span>
+            </div>
+          </td>
+          <td style="max-width:250px;">
+            <div style="font-size:0.8rem; color:var(--text-body); white-space:nowrap;
+                        overflow:hidden; text-overflow:ellipsis;">
+              {{ comment.content|truncatechars:80 }}
+            </div>
+          </td>
+          <td style="max-width:150px;">
+            <a href="{% url 'news_detail' comment.news.news_id %}"
+               style="font-size:0.78rem; color:var(--accent); font-weight:600;
+                      white-space:nowrap; overflow:hidden; text-overflow:ellipsis; display:block;">
+              {{ comment.news.title|truncatechars:40 }}
+            </a>
+          </td>
+          <td style="font-size:0.72rem; color:var(--text-muted); font-family:'JetBrains Mono',monospace;">
+            {{ comment.created_at|date:"d M Y" }}
+          </td>
+          <td>
+            <form method="POST" action="{% url 'admin_comment_delete' comment.pk %}"
+                  style="display:inline;"
+                  onsubmit="return confirm('Delete this comment?')">
+              {% csrf_token %}
+              <button type="submit" class="btn btn-icon delete" title="Delete">
+                <i class="fa fa-trash"></i>
+              </button>
+            </form>
+          </td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="5" style="text-align:center; color:var(--text-muted); padding:44px;">
+            No comments yet.
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+{% endblock %}

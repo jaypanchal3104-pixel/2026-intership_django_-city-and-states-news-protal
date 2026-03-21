@@ -1,0 +1,110 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Analytics — City &amp; State News{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+  <div>
+    <h1 class="page-title">Analytics</h1>
+    <p class="page-subtitle">Portal performance overview</p>
+  </div>
+</div>
+
+{# Stats #}
+<div class="stats-grid">
+  <div class="stat-card" style="--s-color:var(--accent);">
+    <div class="stat-icon si-red"><i class="fa fa-newspaper"></i></div>
+    <div><div class="stat-val">{{ total_news|default:0 }}</div><div class="stat-lbl">Total Articles</div></div>
+  </div>
+  <div class="stat-card" style="--s-color:#16a34a;">
+    <div class="stat-icon si-green"><i class="fa fa-circle-check"></i></div>
+    <div><div class="stat-val">{{ published_news|default:0 }}</div><div class="stat-lbl">Published</div></div>
+  </div>
+  <div class="stat-card" style="--s-color:#2563eb;">
+    <div class="stat-icon si-blue"><i class="fa fa-eye"></i></div>
+    <div><div class="stat-val">{{ total_views|default:0 }}</div><div class="stat-lbl">Total Views</div></div>
+  </div>
+  <div class="stat-card" style="--s-color:#c2410c;">
+    <div class="stat-icon si-gold"><i class="fa fa-users"></i></div>
+    <div><div class="stat-val">{{ total_users|default:0 }}</div><div class="stat-lbl">Total Users</div></div>
+  </div>
+  <div class="stat-card" style="--s-color:#475569;">
+    <div class="stat-icon si-slate"><i class="fa fa-comments"></i></div>
+    <div><div class="stat-val">{{ total_comments|default:0 }}</div><div class="stat-lbl">Comments</div></div>
+  </div>
+</div>
+
+<div class="grid-2">
+
+  {# Top Articles #}
+  <div class="card">
+    <div class="card-header"><span class="card-title">Top Articles by Views</span></div>
+    <div class="table-responsive">
+      <table class="table">
+        <thead>
+          <tr><th>Title</th><th>Category</th><th>Views</th></tr>
+        </thead>
+        <tbody>
+          {% for news in top_news %}
+          <tr>
+            <td style="max-width:200px;">
+              <a href="{% url 'news_detail' news.news_id %}"
+                 style="font-weight:600; font-size:0.83rem; color:var(--accent);
+                        white-space:nowrap; overflow:hidden; text-overflow:ellipsis; display:block;">
+                {{ news.title|truncatechars:45 }}
+              </a>
+            </td>
+            <td><span class="cat-tag" style="font-size:0.55rem;">{{ news.category }}</span></td>
+            <td style="font-family:'JetBrains Mono',monospace; font-size:0.82rem; font-weight:700;">
+              {{ news.views }}
+            </td>
+          </tr>
+          {% empty %}
+          <tr><td colspan="3" style="text-align:center; color:var(--text-muted); padding:20px;">No data.</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  {# Top Journalists #}
+  <div class="card">
+    <div class="card-header"><span class="card-title">Top Journalists</span></div>
+    <div class="table-responsive">
+      <table class="table">
+        <thead>
+          <tr><th>Journalist</th><th>Email</th><th>Articles</th></tr>
+        </thead>
+        <tbody>
+          {% for j in top_journalists %}
+          <tr>
+            <td>
+              <div style="display:flex; align-items:center; gap:8px;">
+                <div style="width:28px; height:28px; border-radius:50%; background:var(--primary);
+                            display:flex; align-items:center; justify-content:center;
+                            color:#fff; font-size:0.65rem; font-weight:700; flex-shrink:0;">
+                  {{ j.firstname|default:j.email|first|upper }}
+                </div>
+                <span style="font-weight:600; font-size:0.83rem;">
+                  {{ j.firstname|default:"—" }} {{ j.lastname|default:"" }}
+                </span>
+              </div>
+            </td>
+            <td style="font-size:0.78rem; color:var(--text-muted);">{{ j.email }}</td>
+            <td style="font-family:'JetBrains Mono',monospace; font-size:0.82rem; font-weight:700;">
+              {{ j.article_count }}
+            </td>
+          </tr>
+          {% empty %}
+          <tr><td colspan="3" style="text-align:center; color:var(--text-muted); padding:20px;">No data.</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+
+{% endblock %}
