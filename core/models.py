@@ -50,7 +50,7 @@ class User(AbstractBaseUser):
         null=True
     )
     mobile = models.CharField(max_length=15, blank=True, null=True)
-
+    profile_photo = models.ImageField(upload_to='profile_photos/',null=True,blank=True)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
     is_admin = models.BooleanField(default=False)
