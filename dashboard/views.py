@@ -195,7 +195,7 @@ def advertisersView(request):
 
 
 # ─────────────────────────────────────────────
-#  COMMENTS
+#  ADMIN COMMENTS
 # ─────────────────────────────────────────────
 @role_required(allowed_roles=["admin"])
 def commentsView(request):
@@ -234,30 +234,27 @@ def advertisementsView(request):
 @role_required(allowed_roles=["admin"])
 def analyticsView(request):
     from core.models import News, User, Comment
-    from django.db.models import Count
 
-    total_news      = News.objects.count()
-    published_news  = News.objects.filter(status='published').count()
-    total_views     = News.objects.aggregate(total=Sum('views'))['total'] or 0
-    total_users     = User.objects.count()
-    total_comments  = Comment.objects.count()
+    total_news     = News.objects.count()
+    published_news = News.objects.filter(status='published').count()
+    total_views    = News.objects.aggregate(total=Sum('views'))['total'] or 0
+    total_users    = User.objects.count()
+    total_comments = Comment.objects.count()
 
-    top_news = News.objects.filter(
-        status='published'
-    ).order_by('-views')[:10]
+    top_news = News.objects.filter(status='published').order_by('-views')[:10]
 
     top_journalists = User.objects.filter(
         role='journalist'
     ).annotate(article_count=Count('news_articles')).order_by('-article_count')[:5]
 
     return render(request, "dashboard/analytics.html", {
-        'total_news':       total_news,
-        'published_news':   published_news,
-        'total_views':      total_views,
-        'total_users':      total_users,
-        'total_comments':   total_comments,
-        'top_news':         top_news,
-        'top_journalists':  top_journalists,
+        'total_news':      total_news,
+        'published_news':  published_news,
+        'total_views':     total_views,
+        'total_users':     total_users,
+        'total_comments':  total_comments,
+        'top_news':        top_news,
+        'top_journalists': top_journalists,
     })
 
 
@@ -286,6 +283,22 @@ def journalistDashboardView(request):
         'pending_count':   pending_count,
         'draft_count':     draft_count,
         'total_views':     total_views,
+    })
+
+
+# ─────────────────────────────────────────────
+#  JOURNALIST COMMENTS
+# ─────────────────────────────────────────────
+@role_required(allowed_roles=["journalist"])
+def journalistCommentsView(request):
+    from core.models import Comment
+    comments = Comment.objects.filter(
+        news__journalist=request.user,
+        is_active=True
+    ).select_related('user', 'news').order_by('-created_at')
+
+    return render(request, "dashboard/journalist_comments.html", {
+        'comments': comments,
     })
 
 

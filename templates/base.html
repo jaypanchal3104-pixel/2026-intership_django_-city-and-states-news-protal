@@ -36,7 +36,6 @@
            class="{% if request.resolver_match.url_name == 'admin_dashboard' %}active{% endif %}">
           <i class="fa fa-gauge-high"></i> Dashboard
         </a>
-
         <div class="sidebar-section-label">Content</div>
         <a href="{% url 'news_list' %}"
            class="{% if request.resolver_match.url_name == 'news_list' %}active{% endif %}">
@@ -55,7 +54,6 @@
            class="{% if request.resolver_match.url_name == 'admin_categories' %}active{% endif %}">
           <i class="fa fa-tags"></i> Categories
         </a>
-
         <div class="sidebar-section-label">Geography</div>
         <a href="{% url 'admin_states' %}"
            class="{% if request.resolver_match.url_name == 'admin_states' %}active{% endif %}">
@@ -65,7 +63,6 @@
            class="{% if request.resolver_match.url_name == 'admin_cities' %}active{% endif %}">
           <i class="fa fa-city"></i> Cities
         </a>
-
         <div class="sidebar-section-label">Users</div>
         <a href="{% url 'admin_journalists' %}"
            class="{% if request.resolver_match.url_name == 'admin_journalists' %}active{% endif %}">
@@ -79,7 +76,6 @@
            class="{% if request.resolver_match.url_name == 'admin_advertisers' %}active{% endif %}">
           <i class="fa fa-bullhorn"></i> Advertisers
         </a>
-
         <div class="sidebar-section-label">System</div>
         <a href="{% url 'admin_comments' %}"
            class="{% if request.resolver_match.url_name == 'admin_comments' %}active{% endif %}">
@@ -105,14 +101,18 @@
            class="{% if request.resolver_match.url_name == 'news_create' %}active{% endif %}">
           <i class="fa fa-plus-circle"></i> Submit Article
         </a>
-        <a href="{% url 'journalist_dashboard' %}">
+        <a href="{% url 'journalist_dashboard' %}"
+           class="{% if request.resolver_match.url_name == 'journalist_dashboard' %}active{% endif %}">
           <i class="fa fa-newspaper"></i> My Articles
         </a>
         <a href="{% url 'journalist_dashboard' %}?status=draft">
           <i class="fa fa-file-pen"></i> Drafts
         </a>
         <div class="sidebar-section-label">Engage</div>
-        <a href="#"><i class="fa fa-comments"></i> Comments</a>
+        <a href="{% url 'journalist_comments' %}"
+           class="{% if request.resolver_match.url_name == 'journalist_comments' %}active{% endif %}">
+          <i class="fa fa-comments"></i> Comments
+        </a>
         <a href="#"><i class="fa fa-user"></i> My Profile</a>
 
       {% elif user.role == 'user' %}

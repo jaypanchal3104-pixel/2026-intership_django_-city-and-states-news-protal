@@ -40,4 +40,6 @@ urlpatterns = [
     path("admin/comments/<int:pk>/delete/", views.commentDeleteView,    name="admin_comment_delete"),
     path("admin/advertisements/",           views.advertisementsView,   name="admin_advertisements"),
     path("admin/analytics/",                views.analyticsView,        name="admin_analytics"),
+
+    path("journalist/comments/", views.journalistCommentsView, name="journalist_comments"),
 ]

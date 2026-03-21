@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}My Comments — City &amp; State News{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+  <div>
+    <h1 class="page-title">Comments on My Articles</h1>
+    <p class="page-subtitle">All comments received on your published articles</p>
+  </div>
+  <span style="background:#e0f2fe; color:#0369a1; padding:6px 14px; border-radius:20px; font-size:0.78rem; font-weight:800;">
+    {{ comments.count }} Comments
+  </span>
+</div>
+
+<div class="card">
+  <div class="table-responsive">
+    <table class="table">
+      <thead>
+        <tr><th>User</th><th>Comment</th><th>Article</th><th>Date</th></tr>
+      </thead>
+      <tbody>
+        {% for comment in comments %}
+        <tr>
+          <td>
+            <div style="display:flex; align-items:center; gap:8px;">
+              <div style="width:30px; height:30px; border-radius:50%; background:var(--primary);
+                          display:flex; align-items:center; justify-content:center;
+                          color:#fff; font-size:0.68rem; font-weight:700; flex-shrink:0;">
+                {{ comment.user.firstname|default:comment.user.email|first|upper }}
+              </div>
+              <span style="font-weight:600; font-size:0.83rem;">
+                {{ comment.user.firstname|default:comment.user.email }}
+              </span>
+            </div>
+          </td>
+          <td style="max-width:280px;">
+            <p style="font-size:0.8rem; color:var(--text-body); line-height:1.5;
+                      white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
+              {{ comment.content|truncatechars:100 }}
+            </p>
+          </td>
+          <td style="max-width:180px;">
+            <a href="{% url 'news_detail' comment.news.news_id %}"
+               style="font-size:0.78rem; color:var(--accent); font-weight:600;
+                      white-space:nowrap; overflow:hidden; text-overflow:ellipsis; display:block;">
+              {{ comment.news.title|truncatechars:45 }}
+            </a>
+          </td>
+          <td style="font-size:0.72rem; color:var(--text-muted); font-family:'JetBrains Mono',monospace;">
+            {{ comment.created_at|date:"d M Y" }}
+          </td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="4" style="text-align:center; padding:52px; color:var(--text-muted);">
+            <i class="fa fa-comments" style="font-size:2.5rem; display:block; margin-bottom:14px; opacity:0.2;"></i>
+            <p>No comments on your articles yet.</p>
+            <a href="{% url 'news_list' %}" class="btn btn-outline mt-2">View All News</a>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+{% endblock %}
