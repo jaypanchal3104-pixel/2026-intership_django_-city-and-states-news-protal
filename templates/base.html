@@ -32,18 +32,33 @@
 
       {% if user.role == 'admin' or user.is_superuser %}
         <div class="sidebar-section-label">Dashboard</div>
-        <a href="{% url 'admin_dashboard' %}" class="{% if request.resolver_match.url_name == 'admin_dashboard' %}active{% endif %}">
+        <a href="{% url 'admin_dashboard' %}"
+           class="{% if request.resolver_match.url_name == 'admin_dashboard' %}active{% endif %}">
           <i class="fa fa-gauge-high"></i> Dashboard
         </a>
         <div class="sidebar-section-label">Content</div>
-        <a href="{% url 'news_list' %}"><i class="fa fa-newspaper"></i> All News
+        <a href="{% url 'news_list' %}"
+           class="{% if request.resolver_match.url_name == 'news_list' %}active{% endif %}">
+          <i class="fa fa-newspaper"></i> All News
           {% if pending_news %}<span class="nav-badge">{{ pending_news }}</span>{% endif %}
         </a>
-        <a href="{% url 'news_list' %}?status=pending"><i class="fa fa-clock"></i> Pending Approval</a>
-        <a href="{% url 'admin_dashboard' %}"><i class="fa fa-tags"></i> Categories</a>
+        <a href="{% url 'admin_dashboard' %}">
+          <i class="fa fa-clock"></i> Pending Approval
+        </a>
+        <a href="{% url 'news_create' %}"
+           class="{% if request.resolver_match.url_name == 'news_create' %}active{% endif %}">
+          <i class="fa fa-plus-circle"></i> New Article
+        </a>
+        <a href="{% url 'admin_dashboard' %}">
+          <i class="fa fa-tags"></i> Categories
+        </a>
         <div class="sidebar-section-label">Geography</div>
-        <a href="{% url 'admin_dashboard' %}"><i class="fa fa-map"></i> States</a>
-        <a href="{% url 'admin_dashboard' %}"><i class="fa fa-city"></i> Cities</a>
+        <a href="{% url 'admin_dashboard' %}">
+          <i class="fa fa-map"></i> States
+        </a>
+        <a href="{% url 'admin_dashboard' %}">
+          <i class="fa fa-city"></i> Cities
+        </a>
         <div class="sidebar-section-label">Users</div>
         <a href="{% url 'admin_dashboard' %}"><i class="fa fa-pen-nib"></i> Journalists</a>
         <a href="{% url 'admin_dashboard' %}"><i class="fa fa-users"></i> Readers</a>
@@ -55,14 +70,16 @@
 
       {% elif user.role == 'journalist' %}
         <div class="sidebar-section-label">Dashboard</div>
-        <a href="{% url 'journalist_dashboard' %}" class="{% if request.resolver_match.url_name == 'journalist_dashboard' %}active{% endif %}">
+        <a href="{% url 'journalist_dashboard' %}"
+           class="{% if request.resolver_match.url_name == 'journalist_dashboard' %}active{% endif %}">
           <i class="fa fa-gauge-high"></i> My Dashboard
         </a>
         <div class="sidebar-section-label">Articles</div>
-        <a href="{% url 'news_create' %}" class="{% if request.resolver_match.url_name == 'news_create' %}active{% endif %}">
+        <a href="{% url 'news_create' %}"
+           class="{% if request.resolver_match.url_name == 'news_create' %}active{% endif %}">
           <i class="fa fa-plus-circle"></i> Submit Article
         </a>
-        <a href="{% url 'journalist_dashboard' %}" class="{% if request.resolver_match.url_name == 'journalist_dashboard' %}active{% endif %}">
+        <a href="{% url 'journalist_dashboard' %}">
           <i class="fa fa-newspaper"></i> My Articles
         </a>
         <a href="{% url 'journalist_dashboard' %}?status=draft">
@@ -74,10 +91,12 @@
 
       {% elif user.role == 'user' %}
         <div class="sidebar-section-label">Browse</div>
-        <a href="{% url 'home' %}" class="{% if request.resolver_match.url_name == 'home' %}active{% endif %}">
+        <a href="{% url 'home' %}"
+           class="{% if request.resolver_match.url_name == 'home' %}active{% endif %}">
           <i class="fa fa-home"></i> Home
         </a>
-        <a href="{% url 'news_list' %}" class="{% if request.resolver_match.url_name == 'news_list' %}active{% endif %}">
+        <a href="{% url 'news_list' %}"
+           class="{% if request.resolver_match.url_name == 'news_list' %}active{% endif %}">
           <i class="fa fa-newspaper"></i> All News
         </a>
         <a href="{% url 'news_list' %}"><i class="fa fa-tags"></i> By Category</a>
@@ -90,7 +109,8 @@
 
       {% elif user.role == 'advertiser' %}
         <div class="sidebar-section-label">Dashboard</div>
-        <a href="{% url 'advertiser_dashboard' %}" class="{% if request.resolver_match.url_name == 'advertiser_dashboard' %}active{% endif %}">
+        <a href="{% url 'advertiser_dashboard' %}"
+           class="{% if request.resolver_match.url_name == 'advertiser_dashboard' %}active{% endif %}">
           <i class="fa fa-gauge-high"></i> Dashboard
         </a>
         <div class="sidebar-section-label">Campaigns</div>
@@ -115,14 +135,13 @@
         </button>
         <form action="{% url 'news_list' %}" method="GET" class="navbar-search" role="search">
           <i class="fa fa-search"></i>
-          <input type="text" name="q" placeholder="Search news, cities, categories…"
+          <input type="text" name="q" placeholder="Search news…"
                  value="{{ request.GET.q }}" autocomplete="off"/>
         </form>
       </div>
       <div class="navbar-right">
         <a href="#" class="navbar-icon-btn" title="Notifications">
           <i class="fa fa-bell"></i>
-          {% if unread_notifications %}<span class="notif-dot"></span>{% endif %}
         </a>
         <div class="dropdown">
           <div class="user-menu" onclick="toggleDropdown(this)">
