@@ -101,8 +101,7 @@
            class="{% if request.resolver_match.url_name == 'news_create' %}active{% endif %}">
           <i class="fa fa-plus-circle"></i> Submit Article
         </a>
-        <a href="{% url 'journalist_dashboard' %}"
-           class="{% if request.resolver_match.url_name == 'journalist_dashboard' %}active{% endif %}">
+        <a href="{% url 'journalist_dashboard' %}">
           <i class="fa fa-newspaper"></i> My Articles
         </a>
         <a href="{% url 'journalist_dashboard' %}?status=draft">
@@ -128,9 +127,18 @@
            class="{% if request.resolver_match.url_name == 'news_list' %}active{% endif %}">
           <i class="fa fa-newspaper"></i> All News
         </a>
-        <a href="{% url 'news_list' %}"><i class="fa fa-tags"></i> By Category</a>
-        <a href="{% url 'news_list' %}"><i class="fa fa-city"></i> By City</a>
-        <a href="{% url 'news_list' %}"><i class="fa fa-map"></i> By State</a>
+        <a href="{% url 'news_list' %}?category="
+           class="{% if request.GET.category %}active{% endif %}">
+          <i class="fa fa-tags"></i> By Category
+        </a>
+        <a href="{% url 'news_list' %}?city="
+           class="{% if request.GET.city %}active{% endif %}">
+          <i class="fa fa-city"></i> By City
+        </a>
+        <a href='#' state="
+           class="{% if request.GET.state %}active{% endif %}">
+          <i class="fa fa-map"></i> By State
+        </a>
         <div class="sidebar-section-label">My Account</div>
         <a href="{% url 'bookmarks' %}"
            class="{% if request.resolver_match.url_name == 'bookmarks' %}active{% endif %}">
@@ -153,7 +161,9 @@
         </a>
         <div class="sidebar-section-label">Campaigns</div>
         <a href="#"><i class="fa fa-plus-circle"></i> New Campaign</a>
-        <a href="{% url 'advertiser_dashboard' %}"><i class="fa fa-rectangle-ad"></i> My Campaigns</a>
+        <a href="{% url 'advertiser_dashboard' %}">
+          <i class="fa fa-rectangle-ad"></i> My Campaigns
+        </a>
         <div class="sidebar-section-label">Finance</div>
         <a href="#"><i class="fa fa-chart-bar"></i> Analytics</a>
         <a href="#"><i class="fa fa-credit-card"></i> Payments</a>
@@ -194,9 +204,15 @@
             <i class="fa fa-chevron-down" style="font-size:0.6rem; color:var(--text-muted);"></i>
           </div>
           <div class="dropdown-menu">
-            <a class="dropdown-item" href="{% url 'profile' %}"><i class="fa fa-user"></i> Profile</a>
-            <a class="dropdown-item" href="{% url 'profile_edit' %}"><i class="fa fa-pen"></i> Edit Profile</a>
-            <a class="dropdown-item" href="{% url 'change_password' %}"><i class="fa fa-lock"></i> Change Password</a>
+            <a class="dropdown-item" href="{% url 'profile' %}">
+              <i class="fa fa-user"></i> Profile
+            </a>
+            <a class="dropdown-item" href="{% url 'profile_edit' %}">
+              <i class="fa fa-pen"></i> Edit Profile
+            </a>
+            <a class="dropdown-item" href="{% url 'change_password' %}">
+              <i class="fa fa-lock"></i> Change Password
+            </a>
             <div class="dropdown-divider"></div>
             <a class="dropdown-item" href="{% url 'logout' %}" style="color:var(--accent);">
               <i class="fa fa-right-from-bracket"></i> Logout

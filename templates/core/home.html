@@ -13,14 +13,10 @@
     <h1 class="hero-title">{{ featured_news.title }}</h1>
     <p class="hero-excerpt">{{ featured_news.description|striptags|truncatewords:28 }}</p>
     <div class="hero-actions">
-      {# URL: dashboard:news_detail #}
-      <a href="#" class="btn btn-primary btn-lg">
-        {# href="#"  →  replace with {% url 'dashboard:news_detail' featured_news.pk %} #}
+      <a href="{% url 'news_detail' featured_news.news_id %}" class="btn btn-primary btn-lg">
         <i class="fa fa-newspaper"></i> Read Full Story
       </a>
-      {# URL: dashboard:news_list #}
-      <a href="#" class="btn btn-ghost-white">All News →</a>
-      {# href="#"  →  replace with {% url 'dashboard:news_list' %} #}
+      <a href="{% url 'news_list' %}" class="btn btn-ghost-white">All News →</a>
     </div>
     <div class="hero-meta">
       <span><i class="fa fa-calendar"></i> {{ featured_news.publish_date|date:"d M Y" }}</span>
@@ -33,20 +29,22 @@
 
 {# ── Category Filter Bar ── #}
 <div class="filter-bar">
-  <span style="font-size:0.68rem; font-weight:800; text-transform:uppercase; letter-spacing:0.08em; color:var(--text-muted);">Filter:</span>
-  {# URL: dashboard:home #}
-  <a href="#" class="cat-filter-btn {% if not request.GET.category %}active{% endif %}">All</a>
-  {# href="#"  →  replace with {% url 'dashboard:home' %} #}
+  <span style="font-size:0.68rem; font-weight:800; text-transform:uppercase;
+               letter-spacing:0.08em; color:var(--text-muted);">Filter:</span>
+
+  <a href="{% url 'home' %}"
+     class="cat-filter-btn {% if not request.GET.category %}active{% endif %}">All</a>
+
   {% for cat in categories %}
-  {# URL: dashboard:home ?category=cat.category_id #}
-  <a href="#" class="cat-filter-btn {% if request.GET.category == cat.category_id|stringformat:'s' %}active{% endif %}">
-    {# href="#"  →  replace with ?category={{ cat.category_id }} #}
+  <a href="{% url 'home' %}?category={{ cat.category_id }}"
+     class="cat-filter-btn {% if request.GET.category == cat.category_id|stringformat:'s' %}active{% endif %}">
     {{ cat.category_name }}
   </a>
   {% endfor %}
+
   <div style="margin-left:auto;">
     <select class="form-control" style="width:auto; font-size:0.78rem; padding:5px 11px;"
-            onchange="location.href='?state='+this.value">
+            onchange="location.href='{% url 'home' %}?state='+this.value">
       <option value="">All States</option>
       {% for state in states %}
       <option value="{{ state.state_id }}"
@@ -59,7 +57,8 @@
 </div>
 
 {# ── Body Grid ── #}
-<div style="max-width:1280px; margin:0 auto; padding:28px 30px; display:grid; grid-template-columns:1fr 300px; gap:26px;">
+<div style="max-width:1280px; margin:0 auto; padding:28px 30px;
+            display:grid; grid-template-columns:1fr 300px; gap:26px;">
 
   {# News Grid #}
   <div>
@@ -73,31 +72,38 @@
     <div class="news-grid">
       {% for news in news_list %}
       <article class="news-card">
-        {% if news.image %}
-          <img src="{{ news.image }}" alt="{{ news.title }}" class="news-card-img" loading="lazy"/>
-        {% else %}
-          <div class="news-card-img-placeholder"><i class="fa fa-newspaper"></i></div>
-        {% endif %}
+
+        <a href="{% url 'news_detail' news.news_id %}">
+          {% if news.image %}
+          <img src="{{ news.image.url }}" alt="{{ news.title }}"
+               class="news-card-img" loading="lazy"/>
+          {% else %}
+          <div class="news-card-img-placeholder">
+            <i class="fa fa-newspaper"></i>
+          </div>
+          {% endif %}
+        </a>
+
         <div class="news-card-body">
           <div class="news-card-meta">
             <span class="cat-tag">{{ news.category }}</span>
             <span class="news-date">{{ news.publish_date|date:"d M" }}</span>
           </div>
           <h3 class="news-card-title">
-            {# URL: dashboard:news_detail #}
-            <a href="#">
-              {# href="#"  →  replace with {% url 'dashboard:news_detail' news.pk %} #}
-              {{ news.title }}
-            </a>
+            <a href="{% url 'news_detail' news.news_id %}">{{ news.title }}</a>
           </h3>
           <p class="news-card-excerpt">{{ news.description|striptags|truncatewords:18 }}</p>
         </div>
+
         <div class="news-card-footer">
-          <span class="news-location"><i class="fa fa-location-dot"></i> {{ news.city }}</span>
-          {# URL: dashboard:news_detail #}
-          <a href="#" class="btn btn-sm btn-outline">Read →</a>
-          {# href="#"  →  replace with {% url 'dashboard:news_detail' news.pk %} #}
+          <span class="news-location">
+            <i class="fa fa-location-dot"></i> {{ news.city }}
+          </span>
+          <a href="{% url 'news_detail' news.news_id %}" class="btn btn-sm btn-outline">
+            Read →
+          </a>
         </div>
+
       </article>
       {% empty %}
       <div style="grid-column:1/-1; text-align:center; padding:52px; color:var(--text-muted);">
@@ -134,16 +140,18 @@
   {# ── Right Sidebar ── #}
   <aside>
 
-    {# Top Cities widget #}
+    {# Top Cities #}
     <div class="card mb-3">
-      <div class="card-header"><span class="card-title"><i class="fa fa-city" style="color:var(--accent);"></i> Top Cities</span></div>
+      <div class="card-header">
+        <span class="card-title">
+          <i class="fa fa-city" style="color:var(--accent);"></i> Top Cities
+        </span>
+      </div>
       <div style="padding:8px;">
         {% for city in top_cities %}
-        {# URL: dashboard:news_by_city ?city=city.city_id #}
-        <a href="#"
-          {# href="#"  →  replace with ?city={{ city.city_id }} #}
+        <a href="{% url 'home' %}?city={{ city.city_id }}"
            style="display:flex; align-items:center; gap:10px; padding:8px 10px;
-                  border-radius:7px; transition:var(--tr);"
+                  border-radius:7px; transition:var(--tr); text-decoration:none;"
            onmouseover="this.style.background='var(--bg-light)'"
            onmouseout="this.style.background=''">
           <span style="width:26px; height:26px; background:var(--gold-light); border-radius:5px;
@@ -158,16 +166,19 @@
       </div>
     </div>
 
-    {# Categories widget #}
+    {# Categories #}
     <div class="card mb-3">
-      <div class="card-header"><span class="card-title"><i class="fa fa-tags" style="color:var(--accent);"></i> Categories</span></div>
+      <div class="card-header">
+        <span class="card-title">
+          <i class="fa fa-tags" style="color:var(--accent);"></i> Categories
+        </span>
+      </div>
       <div style="padding:8px;">
         {% for cat in categories %}
-        {# URL: dashboard:news_by_category ?category=cat.category_id #}
-        <a href="#"
-          {# href="#"  →  replace with ?category={{ cat.category_id }} #}
+        <a href="{% url 'home' %}?category={{ cat.category_id }}"
            style="display:flex; align-items:center; justify-content:space-between;
-                  padding:8px 10px; border-radius:7px; font-size:0.83rem; transition:var(--tr);"
+                  padding:8px 10px; border-radius:7px; font-size:0.83rem;
+                  transition:var(--tr); text-decoration:none;"
            onmouseover="this.style.background='var(--bg-light)'"
            onmouseout="this.style.background=''">
           <span>{{ cat.category_name }}</span>
@@ -177,17 +188,17 @@
       </div>
     </div>
 
-    {# Newsletter widget #}
+    {# Newsletter #}
     <div class="card" style="background:var(--primary); border:none;">
       <div style="padding:18px; text-align:center;">
-        <i class="fa fa-envelope" style="font-size:1.8rem; color:var(--gold); margin-bottom:10px; display:block;"></i>
+        <i class="fa fa-envelope" style="font-size:1.8rem; color:var(--gold);
+                                         margin-bottom:10px; display:block;"></i>
         <h4 style="color:#fff; margin-bottom:6px;">Daily Digest</h4>
-        <p style="font-size:0.78rem; color:rgba(255,255,255,0.58); margin-bottom:14px; line-height:1.5;">
+        <p style="font-size:0.78rem; color:rgba(255,255,255,0.58);
+                  margin-bottom:14px; line-height:1.5;">
           Get top stories from your city delivered every morning.
         </p>
-        {# URL: dashboard:subscribe #}
         <form action="#" method="POST">
-          {# action="#"  →  replace with {% url 'dashboard:subscribe' %} #}
           {% csrf_token %}
           <input type="email" name="email" class="form-control"
                  placeholder="your@email.com"
