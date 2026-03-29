@@ -1,0 +1,124 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{% if ad %}Edit Campaign{% else %}New Campaign{% endif %} — City &amp; State News{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+  <div>
+    <h1 class="page-title">{% if ad %}Edit Campaign{% else %}New Campaign{% endif %}</h1>
+    <p class="page-subtitle">{% if ad %}Update your campaign details.{% else %}Create a new ad campaign.{% endif %}</p>
+  </div>
+  <a href="{% url 'advertiser_dashboard' %}" class="btn btn-outline">
+    <i class="fa fa-arrow-left"></i> Back
+  </a>
+</div>
+
+<div style="max-width:640px;">
+  <div class="card">
+    <div class="card-header">
+      <span class="card-title">Campaign Details</span>
+    </div>
+    <div class="card-body">
+      <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <div class="form-group">
+          <label class="form-label">Campaign Name <span class="req">*</span></label>
+          <input type="text" name="name" class="form-control"
+                 placeholder="e.g. Diwali Sale 2026"
+                 value="{{ ad.name|default:'' }}" required/>
+        </div>
+
+        <div class="form-row-2">
+          <div class="form-group">
+            <label class="form-label">Placement <span class="req">*</span></label>
+            <select name="placement" class="form-control" required>
+              <option value="">— Select —</option>
+              <option value="homepage" {% if ad.placement == 'homepage' %}selected{% endif %}>Homepage Banner</option>
+              <option value="article"  {% if ad.placement == 'article'  %}selected{% endif %}>Article Page</option>
+              <option value="sidebar"  {% if ad.placement == 'sidebar'  %}selected{% endif %}>Side Banner</option>
+              <option value="footer"   {% if ad.placement == 'footer'   %}selected{% endif %}>Footer Banner</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Budget (₹) <span class="req">*</span></label>
+            <input type="number" name="budget" class="form-control"
+                   placeholder="e.g. 5000" min="0"
+                   value="{{ ad.budget|default:'' }}" required/>
+          </div>
+        </div>
+
+        <div class="form-row-2">
+          <div class="form-group">
+            <label class="form-label">Start Date</label>
+            <input type="date" name="start_date" class="form-control"
+                   value="{{ ad.start_date|date:'Y-m-d'|default:'' }}"/>
+          </div>
+          <div class="form-group">
+            <label class="form-label">End Date</label>
+            <input type="date" name="end_date" class="form-control"
+                   value="{{ ad.end_date|date:'Y-m-d'|default:'' }}"/>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Ad URL (Link)</label>
+          <input type="url" name="ad_url" class="form-control"
+                 placeholder="https://yourwebsite.com"
+                 value="{{ ad.ad_url|default:'' }}"/>
+          <span class="form-hint">Where users go when they click your ad.</span>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Ad Image</label>
+          {% if ad and ad.ad_image %}
+          <img src="{{ ad.ad_image.url }}" alt="Current"
+               style="max-height:120px; object-fit:cover; border-radius:var(--radius);
+                      border:1px solid var(--border); margin-bottom:10px;"/>
+          <div style="font-size:0.72rem; color:var(--text-muted); margin-bottom:8px;">
+            Current image. Upload new to replace.
+          </div>
+          {% endif %}
+          <input type="file" name="ad_image" class="form-control" accept="image/*"/>
+          <span class="form-hint">JPG, PNG — Recommended 1200×300px for banners.</span>
+        </div>
+
+        {# Status — only show if editing #}
+        {% if ad %}
+        <div class="form-group">
+          <label class="form-label">Status</label>
+          <div style="padding:10px 14px; background:var(--bg-light); border-radius:var(--radius);
+                      font-size:0.83rem; color:var(--text-muted);">
+            {% if ad.status == 'active' %}<span class="badge badge-published">Active</span>
+            {% elif ad.status == 'pending' %}<span class="badge badge-pending">Pending Approval</span>
+            {% elif ad.status == 'inactive' %}<span class="badge badge-draft">Inactive</span>
+            {% else %}<span class="badge badge-rejected">Rejected</span>{% endif %}
+            <span style="margin-left:8px;">Status is managed by admin.</span>
+          </div>
+        </div>
+        {% endif %}
+
+        <div style="display:flex; gap:10px; margin-top:8px;">
+          <button type="submit" class="btn btn-primary btn-lg">
+            <i class="fa fa-floppy-disk"></i>
+            {% if ad %}Update Campaign{% else %}Submit Campaign{% endif %}
+          </button>
+          <a href="{% url 'advertiser_dashboard' %}" class="btn btn-outline btn-lg">Cancel</a>
+        </div>
+
+      </form>
+    </div>
+  </div>
+
+  {# Info box #}
+  <div style="background:#fffbeb; border:1px solid #fcd34d; border-radius:var(--radius);
+              padding:14px 16px; font-size:0.8rem; color:#92400e; margin-top:16px; line-height:1.7;">
+    <i class="fa fa-circle-info"></i>
+    <strong>Note:</strong> New campaigns are reviewed by admin before going live.
+    You will be notified once your campaign is approved.
+  </div>
+</div>
+
+{% endblock %}

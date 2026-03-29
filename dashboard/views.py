@@ -77,9 +77,7 @@ def categoriesView(request):
         return redirect('admin_categories')
 
     categories = Category.objects.annotate(news_count=Count('news')).order_by('category_name')
-    return render(request, "dashboard/categories.html", {
-        'categories': categories,
-    })
+    return render(request, "dashboard/categories.html", {'categories': categories})
 
 
 @role_required(allowed_roles=["admin"])
@@ -109,9 +107,7 @@ def statesView(request):
         city_count=Count('cities'),
         news_count=Count('cities__news')
     ).order_by('state_name')
-    return render(request, "dashboard/states.html", {
-        'states': states,
-    })
+    return render(request, "dashboard/states.html", {'states': states})
 
 
 @role_required(allowed_roles=["admin"])
@@ -134,18 +130,14 @@ def citiesView(request):
         name     = request.POST.get('city_name', '').strip()
         state_id = request.POST.get('state_id', '')
         if name and state_id:
-            from core.models import State as S
-            state = get_object_or_404(S, state_id=state_id)
+            state = get_object_or_404(State, state_id=state_id)
             City.objects.create(city_name=name, state=state)
             messages.success(request, f'City "{name}" created!')
         return redirect('admin_cities')
 
     cities = City.objects.select_related('state').order_by('city_name')
     states = State.objects.all()
-    return render(request, "dashboard/cities.html", {
-        'cities': cities,
-        'states': states,
-    })
+    return render(request, "dashboard/cities.html", {'cities': cities, 'states': states})
 
 
 @role_required(allowed_roles=["admin"])
@@ -165,9 +157,7 @@ def cityDeleteView(request, pk):
 def journalistsView(request):
     from core.models import User
     journalists = User.objects.filter(role='journalist').order_by('-created_at')
-    return render(request, "dashboard/journalists.html", {
-        'journalists': journalists,
-    })
+    return render(request, "dashboard/journalists.html", {'journalists': journalists})
 
 
 # ─────────────────────────────────────────────
@@ -177,9 +167,7 @@ def journalistsView(request):
 def readersView(request):
     from core.models import User
     readers = User.objects.filter(role='user').order_by('-created_at')
-    return render(request, "dashboard/readers.html", {
-        'readers': readers,
-    })
+    return render(request, "dashboard/readers.html", {'readers': readers})
 
 
 # ─────────────────────────────────────────────
@@ -189,9 +177,7 @@ def readersView(request):
 def advertisersView(request):
     from core.models import User
     advertisers = User.objects.filter(role='advertiser').order_by('-created_at')
-    return render(request, "dashboard/advertisers.html", {
-        'advertisers': advertisers,
-    })
+    return render(request, "dashboard/advertisers.html", {'advertisers': advertisers})
 
 
 # ─────────────────────────────────────────────
@@ -201,9 +187,7 @@ def advertisersView(request):
 def commentsView(request):
     from core.models import Comment
     comments = Comment.objects.select_related('user', 'news').order_by('-created_at')
-    return render(request, "dashboard/comments.html", {
-        'comments': comments,
-    })
+    return render(request, "dashboard/comments.html", {'comments': comments})
 
 
 @role_required(allowed_roles=["admin"])
@@ -217,15 +201,13 @@ def commentDeleteView(request, pk):
 
 
 # ─────────────────────────────────────────────
-#  ADVERTISEMENTS
+#  ADVERTISEMENTS (admin)
 # ─────────────────────────────────────────────
 @role_required(allowed_roles=["admin"])
 def advertisementsView(request):
     from core.models import Advertisement
     ads = Advertisement.objects.select_related('advertiser').order_by('-created_at')
-    return render(request, "dashboard/advertisements.html", {
-        'ads': ads,
-    })
+    return render(request, "dashboard/advertisements.html", {'ads': ads})
 
 
 # ─────────────────────────────────────────────
@@ -242,7 +224,6 @@ def analyticsView(request):
     total_comments = Comment.objects.count()
 
     top_news = News.objects.filter(status='published').order_by('-views')[:10]
-
     top_journalists = User.objects.filter(
         role='journalist'
     ).annotate(article_count=Count('news_articles')).order_by('-article_count')[:5]
@@ -266,8 +247,7 @@ def journalistDashboardView(request):
     from core.models import News
 
     my_news = News.objects.filter(journalist=request.user).order_by('-created_at')
-
-    status = request.GET.get('status')
+    status  = request.GET.get('status')
     if status and status != 'all':
         my_news = my_news.filter(status=status)
 
@@ -296,10 +276,7 @@ def journalistCommentsView(request):
         news__journalist=request.user,
         is_active=True
     ).select_related('user', 'news').order_by('-created_at')
-
-    return render(request, "dashboard/journalist_comments.html", {
-        'comments': comments,
-    })
+    return render(request, "dashboard/journalist_comments.html", {'comments': comments})
 
 
 # ─────────────────────────────────────────────
@@ -310,18 +287,95 @@ def advertiserDashboardView(request):
     from core.models import Advertisement
 
     my_ads            = Advertisement.objects.filter(advertiser=request.user).order_by('-created_at')
-    active_count      = my_ads.filter(status='active').count()
+    total_campaigns   = my_ads.count()
+    active_campaigns  = my_ads.filter(status='active').count()
     pending_count     = my_ads.filter(status='pending').count()
     total_impressions = my_ads.aggregate(total=Sum('impressions'))['total'] or 0
     total_clicks      = my_ads.aggregate(total=Sum('clicks'))['total'] or 0
 
     return render(request, "dashboard/advertiser_dashboard.html", {
         'my_ads':            my_ads,
-        'active_count':      active_count,
+        'total_campaigns':   total_campaigns,
+        'active_campaigns':  active_campaigns,
         'pending_count':     pending_count,
         'total_impressions': total_impressions,
         'total_clicks':      total_clicks,
     })
+
+
+# ─────────────────────────────────────────────
+#  ADVERTISER — CREATE CAMPAIGN
+# ─────────────────────────────────────────────
+@role_required(allowed_roles=["advertiser"])
+def advertiserCampaignCreateView(request):
+    from core.models import Advertisement
+    if request.method == 'POST':
+        name       = request.POST.get('name', '').strip()
+        placement  = request.POST.get('placement', '')
+        budget     = request.POST.get('budget', 0)
+        ad_url     = request.POST.get('ad_url', '')
+        start_date = request.POST.get('start_date') or None
+        end_date   = request.POST.get('end_date') or None
+        ad_image   = request.FILES.get('ad_image')
+
+        if name and placement:
+            ad = Advertisement(
+                advertiser = request.user,
+                name       = name,
+                placement  = placement,
+                budget     = budget,
+                ad_url     = ad_url,
+                start_date = start_date,
+                end_date   = end_date,
+                status     = 'pending',
+            )
+            if ad_image:
+                ad.ad_image = ad_image
+            ad.save()
+            messages.success(request, f'Campaign "{name}" submitted for review!')
+            return redirect('advertiser_dashboard')
+        else:
+            messages.error(request, 'Campaign name and placement are required.')
+
+    return render(request, "dashboard/campaign_form.html", {'ad': None})
+
+
+# ─────────────────────────────────────────────
+#  ADVERTISER — EDIT CAMPAIGN
+# ─────────────────────────────────────────────
+@role_required(allowed_roles=["advertiser"])
+def advertiserCampaignEditView(request, pk):
+    from core.models import Advertisement
+    ad = get_object_or_404(Advertisement, pk=pk, advertiser=request.user)
+
+    if request.method == 'POST':
+        ad.name       = request.POST.get('name', ad.name).strip()
+        ad.placement  = request.POST.get('placement', ad.placement)
+        ad.budget     = request.POST.get('budget', ad.budget)
+        ad.ad_url     = request.POST.get('ad_url', '')
+        ad.start_date = request.POST.get('start_date') or None
+        ad.end_date   = request.POST.get('end_date') or None
+        if request.FILES.get('ad_image'):
+            ad.ad_image = request.FILES['ad_image']
+        ad.save()
+        messages.success(request, 'Campaign updated!')
+        return redirect('advertiser_dashboard')
+
+    return render(request, "dashboard/campaign_form.html", {'ad': ad})
+
+
+# ─────────────────────────────────────────────
+#  ADVERTISER — DELETE CAMPAIGN
+# ─────────────────────────────────────────────
+@role_required(allowed_roles=["advertiser"])
+def advertiserCampaignDeleteView(request, pk):
+    from core.models import Advertisement
+    ad = get_object_or_404(Advertisement, pk=pk, advertiser=request.user)
+    if request.method == 'POST':
+        ad.delete()
+        messages.success(request, 'Campaign deleted!')
+        return redirect('advertiser_dashboard')
+    return render(request, "dashboard/campaign_delete.html", {'ad': ad})
 
 
 # ─────────────────────────────────────────────
@@ -342,6 +396,10 @@ def homeView(request):
     if state_id:
         news_qs = news_qs.filter(city__state__state_id=state_id)
 
+    city_id = request.GET.get('city')
+    if city_id:
+        news_qs = news_qs.filter(city__city_id=city_id)
+
     paginator = Paginator(news_qs, 6)
     news_list = paginator.get_page(request.GET.get('page'))
 
@@ -349,7 +407,7 @@ def homeView(request):
     states     = State.objects.all()
     top_cities = City.objects.annotate(news_count=Count('news')).order_by('-news_count')[:5]
 
-    return render(request, "core/home.html", {
+    return render(request, 'core/home.html', {
         'news_list':     news_list,
         'featured_news': featured_news,
         'breaking_news': breaking_news,

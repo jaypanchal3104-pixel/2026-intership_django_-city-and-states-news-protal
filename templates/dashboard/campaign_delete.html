@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Delete Campaign — City &amp; State News{% endblock %}
+
+{% block content %}
+
+<div style="max-width:480px; margin:40px auto;">
+  <div class="card">
+    <div style="padding:32px; text-align:center;">
+      <div style="width:70px; height:70px; background:#fee2e2; border-radius:50%;
+                  display:flex; align-items:center; justify-content:center;
+                  margin:0 auto 20px; font-size:1.8rem; color:#dc2626;">
+        <i class="fa fa-trash"></i>
+      </div>
+      <h2 style="font-family:'Playfair Display',serif; margin-bottom:10px;">Delete Campaign?</h2>
+      <p style="font-size:0.87rem; color:var(--text-muted); margin-bottom:8px; line-height:1.6;">
+        Are you sure you want to delete
+        <strong style="color:var(--text-dark);">{{ ad.name }}</strong>?
+      </p>
+      <p style="font-size:0.78rem; color:var(--accent); margin-bottom:24px;">
+        This action cannot be undone.
+      </p>
+      <form method="POST" style="display:flex; gap:10px; justify-content:center;">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger">
+          <i class="fa fa-trash"></i> Yes, Delete
+        </button>
+        <a href="{% url 'advertiser_dashboard' %}" class="btn btn-outline">
+          Cancel
+        </a>
+      </form>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

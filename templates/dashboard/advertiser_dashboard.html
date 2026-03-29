@@ -8,11 +8,9 @@
 <div class="page-header">
   <div>
     <h1 class="page-title">Advertiser Dashboard</h1>
-    <p class="page-subtitle">Hello, <strong>{{ user.username }}</strong>! Manage your ad campaigns here.</p>
+    <p class="page-subtitle">Hello, <strong>{{ user.firstname|default:user.email }}</strong>! Manage your ad campaigns here.</p>
   </div>
-  {# URL: dashboard:advertiser_create_campaign #}
-  <a href="#" class="btn btn-primary btn-lg">
-    {# href="#"  →  replace with {% url 'dashboard:advertiser_create_campaign' %} #}
+  <a href="{% url 'advertiser_campaign_create' %}" class="btn btn-primary btn-lg">
     <i class="fa fa-plus-circle"></i> New Campaign
   </a>
 </div>
@@ -33,7 +31,7 @@
   </div>
   <div class="stat-card" style="--s-color:#c2410c;">
     <div class="stat-icon si-gold"><i class="fa fa-indian-rupee-sign"></i></div>
-    <div><div class="stat-val">{{ total_spent|default:0 }}</div><div class="stat-lbl">Total Spent (₹)</div></div>
+    <div><div class="stat-val">{{ total_clicks|default:0 }}</div><div class="stat-lbl">Total Clicks</div></div>
   </div>
 </div>
 
@@ -41,9 +39,7 @@
 <div class="card">
   <div class="card-header">
     <span class="card-title">My Campaigns</span>
-    {# URL: dashboard:advertiser_create_campaign #}
-    <a href="#" class="btn btn-sm btn-primary">
-      {# href="#"  →  replace with {% url 'dashboard:advertiser_create_campaign' %} #}
+    <a href="{% url 'advertiser_campaign_create' %}" class="btn btn-sm btn-primary">
       <i class="fa fa-plus"></i> New
     </a>
   </div>
@@ -53,33 +49,31 @@
         <tr><th>Campaign</th><th>Placement</th><th>Status</th><th>Impressions</th><th>Clicks</th><th>Budget (₹)</th><th>Actions</th></tr>
       </thead>
       <tbody>
-        {% for campaign in campaigns %}
+        {% for ad in my_ads %}
         <tr>
-          <td style="font-weight:600; font-size:0.83rem;">{{ campaign.name }}</td>
-          <td style="font-size:0.8rem;">{{ campaign.placement }}</td>
+          <td style="font-weight:600; font-size:0.83rem;">{{ ad.name }}</td>
+          <td style="font-size:0.8rem;">{{ ad.get_placement_display }}</td>
           <td>
-            {% if campaign.status == 'active' %}<span class="badge badge-active">Active</span>
-            {% else %}<span class="badge badge-inactive">Inactive</span>{% endif %}
+            {% if ad.status == 'active' %}
+              <span class="badge badge-published">Active</span>
+            {% elif ad.status == 'pending' %}
+              <span class="badge badge-pending">Pending</span>
+            {% elif ad.status == 'inactive' %}
+              <span class="badge badge-draft">Inactive</span>
+            {% else %}
+              <span class="badge badge-rejected">Rejected</span>
+            {% endif %}
           </td>
-          <td style="font-family:'JetBrains Mono',monospace; font-size:0.8rem;">{{ campaign.impressions|default:0 }}</td>
-          <td style="font-family:'JetBrains Mono',monospace; font-size:0.8rem;">{{ campaign.clicks|default:0 }}</td>
-          <td style="font-family:'JetBrains Mono',monospace; font-size:0.8rem;">{{ campaign.budget|default:0 }}</td>
+          <td style="font-family:'JetBrains Mono',monospace; font-size:0.8rem;">{{ ad.impressions|default:0 }}</td>
+          <td style="font-family:'JetBrains Mono',monospace; font-size:0.8rem;">{{ ad.clicks|default:0 }}</td>
+          <td style="font-family:'JetBrains Mono',monospace; font-size:0.8rem;">₹{{ ad.budget|default:0 }}</td>
           <td>
             <div style="display:flex; gap:4px;">
-              {# URL: dashboard:advertiser_campaign_detail #}
-              <a href="#" class="btn btn-icon" title="View Analytics">
-                {# href="#"  →  replace with {% url 'dashboard:advertiser_campaign_detail' campaign.pk %} #}
-                <i class="fa fa-chart-bar"></i>
-              </a>
-              {# URL: dashboard:advertiser_campaign_edit #}
-              <a href="#" class="btn btn-icon edit" title="Edit">
-                {# href="#"  →  replace with {% url 'dashboard:advertiser_campaign_edit' campaign.pk %} #}
+              <a href="{% url 'advertiser_campaign_edit' ad.pk %}" class="btn btn-icon edit" title="Edit">
                 <i class="fa fa-pen"></i>
               </a>
-              {# URL: dashboard:advertiser_campaign_delete #}
-              <a href="#" class="btn btn-icon delete" title="Delete"
+              <a href="{% url 'advertiser_campaign_delete' ad.pk %}" class="btn btn-icon delete" title="Delete"
                  onclick="return confirm('Delete this campaign?')">
-                {# href="#"  →  replace with {% url 'dashboard:advertiser_campaign_delete' campaign.pk %} #}
                 <i class="fa fa-trash"></i>
               </a>
             </div>
@@ -90,9 +84,7 @@
           <td colspan="7" style="text-align:center; padding:40px; color:var(--text-muted);">
             <i class="fa fa-rectangle-ad" style="font-size:2.5rem; margin-bottom:12px; display:block; opacity:0.2;"></i>
             <p>No campaigns yet. Create your first ad campaign!</p>
-            {# URL: dashboard:advertiser_create_campaign #}
-            <a href="#" class="btn btn-primary mt-2">
-              {# href="#"  →  replace with {% url 'dashboard:advertiser_create_campaign' %} #}
+            <a href="{% url 'advertiser_campaign_create' %}" class="btn btn-primary mt-2">
               Create Campaign
             </a>
           </td>

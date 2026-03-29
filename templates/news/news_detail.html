@@ -49,6 +49,17 @@
         By <strong>{{ news.journalist.firstname|default:news.journalist.email }}</strong>
       </div>
       {% endif %}
+
+      {# ── Bookmark Button (Reader only) ── #}
+      {% if user.is_authenticated and user.role == 'user' %}
+      <div style="margin-bottom:14px;">
+        <a href="{% url 'bookmark_toggle' news.news_id %}"
+           class="btn btn-sm {% if is_bookmarked %}btn-primary{% else %}btn-outline{% endif %}">
+          <i class="fa {% if is_bookmarked %}fa-bookmark{% else %}fa-bookmark{% endif %}"></i>
+          {% if is_bookmarked %}Bookmarked ✓{% else %}Bookmark{% endif %}
+        </a>
+      </div>
+      {% endif %}
     </header>
 
     {# Featured image #}

@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.utils import timezone
-from core.models import News, Category, State, City,Comment
+from core.models import News, Category, State, City, Comment
 from .forms import NewsForm
 from dashboard.decorators import role_required
 from django.contrib.auth.decorators import login_required
@@ -8,21 +8,30 @@ from django.contrib.auth.decorators import login_required
 
 # ─────────────────────────────────────────────
 #  PUBLIC — NEWS LIST
-#  URL: /news/
 # ─────────────────────────────────────────────
 def newsListView(request):
     news_list  = News.objects.filter(status='published').order_by('-publish_date', '-created_at')
     categories = Category.objects.all()
     states     = State.objects.all()
+    cities     = City.objects.all()
 
+    # Category filter
     category_id = request.GET.get('category')
     if category_id:
         news_list = news_list.filter(category__category_id=category_id)
 
+    # State filter
     state_id = request.GET.get('state')
     if state_id:
         news_list = news_list.filter(city__state__state_id=state_id)
+        cities    = City.objects.filter(state__state_id=state_id)
 
+    # City filter
+    city_id = request.GET.get('city')
+    if city_id:
+        news_list = news_list.filter(city__city_id=city_id)
+
+    # Search
     query = request.GET.get('q')
     if query:
         news_list = news_list.filter(title__icontains=query)
@@ -31,17 +40,15 @@ def newsListView(request):
         'news_list':  news_list,
         'categories': categories,
         'states':     states,
+        'cities':     cities,
         'query':      query,
     })
 
 
 # ─────────────────────────────────────────────
 #  PUBLIC — NEWS DETAIL
-#  URL: /news/<pk>/
 # ─────────────────────────────────────────────
 def newsDetailView(request, pk):
-    # Admin/journalist → badha status dekhai
-    # Public → ফক্ত published
     if request.user.is_authenticated and request.user.role in ['admin', 'journalist']:
         news = get_object_or_404(News, news_id=pk)
     else:
@@ -57,16 +64,24 @@ def newsDetailView(request, pk):
 
     comments = news.comments.filter(is_active=True)
 
+    # Bookmark check
+    is_bookmarked = False
+    if request.user.is_authenticated:
+        from core.models import Bookmark
+        is_bookmarked = Bookmark.objects.filter(
+            user=request.user, news=news
+        ).exists()
+
     return render(request, 'news/news_detail.html', {
-        'news':         news,
-        'related_news': related_news,
-        'comments':     comments,
+        'news':          news,
+        'related_news':  related_news,
+        'comments':      comments,
+        'is_bookmarked': is_bookmarked,
     })
 
 
 # ─────────────────────────────────────────────
 #  JOURNALIST / ADMIN — CREATE NEWS
-#  URL: /news/create/
 # ─────────────────────────────────────────────
 @role_required(allowed_roles=['journalist', 'admin'])
 def newsCreateView(request):
@@ -97,7 +112,6 @@ def newsCreateView(request):
 
 # ─────────────────────────────────────────────
 #  JOURNALIST / ADMIN — EDIT NEWS
-#  URL: /news/<pk>/edit/
 # ─────────────────────────────────────────────
 @role_required(allowed_roles=['journalist', 'admin'])
 def newsEditView(request, pk):
@@ -133,7 +147,6 @@ def newsEditView(request, pk):
 
 # ─────────────────────────────────────────────
 #  JOURNALIST / ADMIN — DELETE NEWS
-#  URL: /news/<pk>/delete/
 # ─────────────────────────────────────────────
 @role_required(allowed_roles=['journalist', 'admin'])
 def newsDeleteView(request, pk):
@@ -151,7 +164,6 @@ def newsDeleteView(request, pk):
 
 # ─────────────────────────────────────────────
 #  ADMIN — APPROVE NEWS
-#  URL: /news/<pk>/approve/
 # ─────────────────────────────────────────────
 @role_required(allowed_roles=['admin'])
 def newsApproveView(request, pk):
@@ -164,7 +176,6 @@ def newsApproveView(request, pk):
 
 # ─────────────────────────────────────────────
 #  ADMIN — REJECT NEWS
-#  URL: /news/<pk>/reject/
 # ─────────────────────────────────────────────
 @role_required(allowed_roles=['admin'])
 def newsRejectView(request, pk):
@@ -174,7 +185,9 @@ def newsRejectView(request, pk):
     return redirect('admin_dashboard')
 
 
-
+# ─────────────────────────────────────────────
+#  ADD COMMENT
+# ─────────────────────────────────────────────
 @login_required
 def addCommentView(request, pk):
     news = get_object_or_404(News, news_id=pk)
