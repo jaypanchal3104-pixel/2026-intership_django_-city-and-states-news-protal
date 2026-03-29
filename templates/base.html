@@ -135,7 +135,7 @@
            class="{% if request.GET.city %}active{% endif %}">
           <i class="fa fa-city"></i> By City
         </a>
-        <a href='#' state="
+        <a href="{% url 'news_list' %}?state="
            class="{% if request.GET.state %}active{% endif %}">
           <i class="fa fa-map"></i> By State
         </a>
@@ -160,16 +160,26 @@
           <i class="fa fa-gauge-high"></i> Dashboard
         </a>
         <div class="sidebar-section-label">Campaigns</div>
-        <a href="#"><i class="fa fa-plus-circle"></i> New Campaign</a>
-        <a href="{% url 'advertiser_dashboard' %}">
+        <a href="{% url 'advertiser_campaign_create' %}"
+           class="{% if request.resolver_match.url_name == 'advertiser_campaign_create' %}active{% endif %}">
+          <i class="fa fa-plus-circle"></i> New Campaign
+        </a>
+        <a href="{% url 'advertiser_dashboard' %}"
+           class="{% if request.resolver_match.url_name == 'advertiser_dashboard' %}active{% endif %}">
           <i class="fa fa-rectangle-ad"></i> My Campaigns
         </a>
-        <div class="sidebar-section-label">Finance</div>
-        <a href="#"><i class="fa fa-chart-bar"></i> Analytics</a>
-        <a href="#"><i class="fa fa-credit-card"></i> Payments</a>
+        <div class="sidebar-section-label">Account</div>
         <a href="{% url 'profile' %}"
            class="{% if request.resolver_match.url_name == 'profile' %}active{% endif %}">
           <i class="fa fa-user"></i> Profile
+        </a>
+        <a href="{% url 'profile_edit' %}"
+           class="{% if request.resolver_match.url_name == 'profile_edit' %}active{% endif %}">
+          <i class="fa fa-pen"></i> Edit Profile
+        </a>
+        <a href="{% url 'change_password' %}"
+           class="{% if request.resolver_match.url_name == 'change_password' %}active{% endif %}">
+          <i class="fa fa-lock"></i> Change Password
         </a>
 
       {% endif %}
